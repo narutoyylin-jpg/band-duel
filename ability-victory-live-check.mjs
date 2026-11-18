@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-const {chromium}=await import('file:///C:/Users/algra/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs');
+import {loadPlaywright} from './scripts/optional-tools.mjs';
+const {chromium}=await loadPlaywright();
 const browser=await chromium.launch({headless:true,channel:'msedge'}),errors=[];let page;
 try{
  const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,reducedMotion:'reduce'});page=await context.newPage();page.setDefaultTimeout(25000);page.on('pageerror',e=>errors.push(e.message));await page.goto('https://band-duel.bandduel-game.workers.dev/play',{waitUntil:'domcontentloaded'});await page.locator('#practice').waitFor();assert.equal(await page.locator('#lobby [data-ability-mode]').count(),0);assert.equal(await page.locator('a[href^="/lab"]').count(),0);

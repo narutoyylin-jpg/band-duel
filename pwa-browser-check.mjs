@@ -27,8 +27,8 @@ const cases=[
 ];
 for(const test of cases){
   const nodes=new Map(),events={},media={matches:false,addEventListener(){}};let lang='zh',prompts=0;
-  const node=id=>{if(!nodes.has(id))nodes.set(id,{hidden:false,open:false,textContent:'',events:{},focus(){},select(){},addEventListener(key,fn){this.events[key]=fn;},showModal(){this.open=true;},close(){this.open=false;}});return nodes.get(id);};
-  const context=vm.createContext({URLSearchParams,$:node,tx:(zh,en)=>lang==='zh'?zh:en,matchMedia:()=>media,window:{addEventListener:(key,fn)=>events[key]=fn},document:{addEventListener(){}},navigator:{userAgent:test.ua,platform:test.platform||'',maxTouchPoints:test.touch||0},location:{protocol:'https:',origin:'https://game.test',search:'?install=1&private=secret'},closeAnimatedDialog:el=>el.close(),updateCoverMotion(){}});
+  const node=id=>{if(!nodes.has(id))nodes.set(id,{hidden:false,open:false,textContent:'',events:{},attributes:{},setAttribute(key,value){this.attributes[key]=value;},getAttribute(key){return this.attributes[key];},focus(){},select(){},addEventListener(key,fn){this.events[key]=fn;},showModal(){this.open=true;},close(){this.open=false;}});return nodes.get(id);};
+  const context=vm.createContext({URLSearchParams,$:node,tx:(zh,en)=>lang==='zh'?zh:en,setSiteLanguage:value=>{lang=value==='en'?'en':'zh';vm.runInContext('renderInstall()',context);},matchMedia:()=>media,window:{addEventListener:(key,fn)=>events[key]=fn},document:{addEventListener(){}},navigator:{userAgent:test.ua,platform:test.platform||'',maxTouchPoints:test.touch||0},location:{protocol:'https:',origin:'https://game.test',search:'?install=1&private=secret'},closeAnimatedDialog:el=>el.close(),updateCoverMotion(){}});
   vm.runInContext(source+'\ninitInstall();',context);
   const device=vm.runInContext('installEnvironment()',context);
   assert.equal(device.browser,test.browser,test.name+' browser');assert.equal(device.ios,!!test.ios,test.name+' OS');
@@ -39,15 +39,21 @@ for(const test of cases){
   assert.match(node(test.guide?'installIosShareText':'installAndroidSteps').textContent,test.steps,test.name+' steps');
   assert.equal(node('installNative').hidden,true,'no assumed native support');
   assert.equal(node('installUrl').value,'https://game.test/play?install=1','copied URL excludes private parameters');
+  assert.equal(node('installLanguageZh').textContent,'繁體中文');assert.equal(node('installLanguageEn').textContent,'English');
+  assert.equal(node('installLanguageZh').getAttribute('aria-pressed'),'true','Chinese selected initially');
   events.beforeinstallprompt({preventDefault(){},prompt:async()=>{prompts++;},userChoice:Promise.resolve({outcome:'dismissed'})});
   assert.equal(prompts,0,'prompt waits for user action');
   assert.equal(node('installNative').hidden,!!test.ios||device.embedded,test.name+' native availability');
   await vm.runInContext('promptInstall()',context);
   assert.equal(prompts,test.ios||device.embedded?0:1,test.name+' prompt trigger');
   if(!test.ios&&!device.embedded)assert.equal(node('installNative').hidden,true,'dismissed prompt cleared');
-  lang='en';vm.runInContext('renderInstall()',context);
+  node('installLanguageEn').events.click();
+  assert.equal(node('installLanguageEn').getAttribute('aria-pressed'),'true','guide button selects English');
+  assert.equal(node('installLanguageZh').getAttribute('aria-pressed'),'false');
   assert.doesNotMatch(node('installIntro').textContent,/[\u4e00-\u9fff]/,test.name+' English intro');
   assert.doesNotMatch(node(test.guide?'installIosShareText':'installAndroidSteps').textContent,/[\u4e00-\u9fff]/,test.name+' English steps');
+  assert.equal(node('installDialog').open,true,'switching language keeps installation guide open');
+  node('installLanguageZh').events.click();assert.equal(node('installLanguageZh').getAttribute('aria-pressed'),'true','guide switches back to Chinese');
   media.matches=true;vm.runInContext('renderInstall()',context);assert.equal(node('installApp').hidden,true,test.name+' installed entry hidden');
 }
 console.log(`Passed: ${cases.length} browser/OS combinations, matching installation instructions, native prompt capability and user action, language switching, and installed-app state.`);

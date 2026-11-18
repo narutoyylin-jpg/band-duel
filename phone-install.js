@@ -22,6 +22,10 @@ function installManualSteps(device,nativeAvailable){
 function installGameUrl(){return (location.protocol==='https:'&&location.origin?location.origin:'https://band-duel.bandduel-game.workers.dev')+'/play?install=1';}
 function renderInstall(){
   const device=installEnvironment(),installed=installState.standalone(),nativeAvailable=!!installState.prompt&&!device.ios&&!device.embedded;
+  const english=tx(false,true);
+  $('installLanguageLabel').textContent=tx('語言','Language');$('installLanguages').setAttribute('aria-label',tx('安裝說明語言','Installation guide language'));
+  $('installLanguageZh').textContent='繁體中文';$('installLanguageEn').textContent='English';
+  $('installLanguageZh').setAttribute('aria-pressed',String(!english));$('installLanguageEn').setAttribute('aria-pressed',String(english));
   const iosGuide=device.ios&&(device.chrome||device.safari),browserName=installBrowserName(device);
   const systemName=device.ios?(device.ipad?'iPad':'iPhone'):device.android?'Android':device.mac?'macOS':/Windows/i.test(navigator.userAgent||'')?'Windows':tx('電腦','Desktop');
   const environmentName=systemName+' · '+browserName;
@@ -56,6 +60,7 @@ async function copyInstallLink(){
 }
 function openInstallGuide(){renderInstall();$('installFeedback').textContent='';$('installUrl').hidden=true;if(!$('installDialog').open)$('installDialog').showModal();updateCoverMotion();}
 function initInstall(){
+  $('installLanguageZh').addEventListener('click',()=>setSiteLanguage('cn'));$('installLanguageEn').addEventListener('click',()=>setSiteLanguage('en'));
   window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installState.prompt=event;renderInstall();});
   window.addEventListener('appinstalled',()=>{installState.prompt=null;$('installApp').hidden=true;if($('installDialog').open)$('installDialog').close();});
   const displayMode=matchMedia('(display-mode: standalone)');if(displayMode.addEventListener)displayMode.addEventListener('change',renderInstall);else displayMode.addListener?.(renderInstall);

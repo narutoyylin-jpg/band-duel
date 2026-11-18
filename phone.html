@@ -50,6 +50,10 @@ body.is-cover main{padding-bottom:58px}body.is-cover .topbar{position:fixed;bott
 @media(min-width:641px) and (max-height:760px){.tutorial-phone svg.demo-band-graph{height:156px}.tutorial-phone-header{margin-bottom:4px}.tutorial-phone-header img{width:65px;height:32px}.tutorial-phone .mission-card{padding:7px}.tutorial-phone .targets{margin:5px 0;font-size:10px}.tutorial-phone .points{font-size:9px}.tutorial-phone .preview{padding:5px 8px;margin-bottom:5px}.tutorial-phone .demo-screen-hint{margin:4px 0}.tutorial-phone .lock-action{padding:5px 12px;min-height:32px}.tutorial-visual{padding:8px}.tutorial-lesson-title{font-size:20px!important;margin:10px 0 12px}}
 .install-dialog{max-height:calc(100dvh - 24px);overflow:auto}
 .install-dialog .tutorial-head{position:sticky;top:0;z-index:1}
+.install-language-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 20px;color:#a8b9d2;font-size:12px}
+.install-languages{display:inline-flex;gap:3px;background:#080d16;border:1px solid #35445c;border-radius:12px;padding:3px}
+.install-languages button{min-height:36px;padding:7px 12px;border:1px solid transparent;border-radius:9px;background:transparent;color:#a8b9d2;font-size:12px}
+.install-languages button[aria-pressed=true]{border-color:#5277a4;background:#192c47;color:#edf4ff}
 .install-dialog .install-app-preview{display:flex;align-items:center;gap:15px;margin-bottom:17px}
 .install-dialog .install-app-preview .install-app-icon{width:64px;height:64px;margin:0;flex:none;border-radius:16px}
 .install-app-preview strong{display:block;font-size:19px;font-weight:650;color:#edf3ff;letter-spacing:.025em}
@@ -278,6 +282,7 @@ body.in-game:not(.in-team) #game{overflow-y:auto;overscroll-behavior:contain;pad
 <dialog id="practiceEntry" class="dialog practice-entry" aria-labelledby="practiceTitle"><header class="tutorial-head"><h2 id="practiceTitle"></h2><button id="practiceClose" type="button"></button></header><div class="tutorial-body"><p id="practiceIntro" class="team-entry-text"></p><div class="ability-rules"><small data-ability-label></small><div><button type="button" data-ability-mode="classic" aria-pressed="true"></button><button type="button" data-ability-mode="skills" aria-pressed="false"></button></div></div><div class="room-format"><button type="button" data-practice-format="1v1" aria-pressed="true">1v1</button><button type="button" data-practice-format="2v2" aria-pressed="false">2v2</button></div><button id="practiceStart" class="wide team-lock" type="button"></button></div></dialog><dialog id="homeJoin" class="dialog" aria-labelledby="homeJoinTitle"><header class="tutorial-head"><h2 id="homeJoinTitle"></h2><button id="homeJoinClose" type="button"></button></header><div class="tutorial-body"><p id="homeJoinHint" class="team-note"></p><input id="codeInput" class="code-input" maxlength="6" placeholder="6 碼房號" aria-label="六碼房號，輸入後自動加入" autocomplete="off" spellcheck="false" inputmode="text" enterkeyhint="go"><button id="homeJoinSubmit" type="button" class="wide"></button><p id="homeJoinStatus" role="status"></p></div></dialog><dialog id="roomCreate" class="dialog room-create-dialog" aria-labelledby="roomCreateTitle"><header class="tutorial-head"><h2 id="roomCreateTitle"></h2><button id="roomCreateClose"></button></header><form id="roomCreateForm" class="tutorial-body"><div class="ability-rules"><small data-ability-label></small><div><button type="button" data-ability-mode="classic" aria-pressed="true"></button><button type="button" data-ability-mode="skills" aria-pressed="false"></button></div></div><div class="room-format"><button type="button" data-room-format="1v1" aria-pressed="true">1v1</button><button type="button" data-room-format="2v2" aria-pressed="false">2v2</button></div><p id="roomSetupMode" class="team-note"></p><div id="roomSetupRoster" class="room-setup-roster"></div><p id="roomSetupRoundsLabel" class="team-note"></p><div id="roomSetupRounds" class="team-rounds"></div><div class="room-timer-option"><span id="roomSetupTimerLabel"></span><button id="roomSetupTimer" type="button" role="switch" aria-checked="true"></button></div><p id="roomSetupTimerHint" class="profile-hint"></p><label id="roomCreateLabel" for="roomCreateInput"></label><div class="room-code-row"><input id="roomCreateInput" class="code-input" maxlength="6" autocomplete="off" spellcheck="false" enterkeyhint="go"><button id="roomCreateRandom" type="button"></button></div><p id="roomCreateHint" class="profile-hint"></p><button id="roomSetupInvite" type="button" class="wide"></button><button id="roomCreateSubmit" type="submit" class="wide"></button><p id="roomCreateStatus" class="shop-status" role="status"></p></form></dialog><dialog id="installDialog" class="dialog install-dialog" aria-labelledby="installTitle">
   <header class="tutorial-head"><h2 id="installTitle"></h2><button id="installClose" type="button"></button></header>
   <div class="tutorial-body">
+    <div class="install-language-row"><span id="installLanguageLabel"></span><div id="installLanguages" class="install-languages" role="group" aria-label="Language" data-no-translate><button id="installLanguageZh" type="button" lang="zh-Hant" aria-pressed="true"></button><button id="installLanguageEn" type="button" lang="en" aria-pressed="false"></button></div></div>
     <div class="install-app-preview"><img class="install-app-icon" src="/app-icon-192.png" alt="Band Duel" width="64" height="64"><div><strong>Band Duel</strong><small id="installPlatformHint"></small></div></div>
     <p id="installIntro"></p>
     <section id="installAndroidGuide"><h3 id="installAndroidTitle"></h3><p id="installAndroidSteps"></p></section>
@@ -834,9 +839,16 @@ const AVATAR_BACKGROUNDS=[
 ];
 const avatarBackgroundId=value=>AVATAR_BACKGROUNDS.some(x=>x.id===value)?value:'midnight';
 
-let siteLanguage='cn';
-try{siteLanguage=new URLSearchParams(location.search).get('lang')||localStorage.getItem('band-language')||'cn';}catch{}
-if(!['cn','en'].includes(siteLanguage))siteLanguage='cn';
+function preferredSiteLanguage(){
+  const normalize=value=>value==='cn'||/^zh(?:-|$)/i.test(value||'')?'cn':/^en(?:-|$)/i.test(value||'')?'en':null;
+  const requested=normalize(new URLSearchParams(location.search).get('lang'));
+  if(requested)return requested;
+  try{const saved=normalize(localStorage.getItem('band-language'));if(saved)return saved;}catch{}
+  const browserLanguages=typeof navigator==='undefined'?[]:(navigator.languages?.length?navigator.languages:[navigator.language]);
+  for(const language of browserLanguages){const supported=normalize(language);if(supported)return supported;}
+  return 'cn';
+}
+let siteLanguage=preferredSiteLanguage();
 const tx=(cn,en)=>siteLanguage==='en'?en:cn;
 const translationPairs=new Map(),localizedNodes=new WeakMap(),localizedAttributes=new WeakMap();
 function addTranslations(pairs){for(const [cn,en] of pairs){translationPairs.set(cn,[cn,en]);if(!translationPairs.has(en))translationPairs.set(en,[cn,en]);}}
@@ -848,6 +860,7 @@ function translated(value){
 }
 const translationPatterns=[[/請手動輸入房號 ([A-Z2-9]+)/g,'Please enter room code $1 manually.'],[/電子伏特/g,'eV']];
 addTranslations([
+ ['離開房間','Leave room'],
  ['2v2 組隊試玩','2v2 team trial'],['這是 2v2 房間，請使用組隊入口。','This is a 2v2 room. Use the team entry.'],['這是 1v1 房間，請使用原本的房間入口。','This is a 1v1 room. Use the original room entry.'],['組隊正在同步，請再試一次。','The team room is syncing. Please retry.'],['組隊房間已滿。','This team room is full.'],['組隊房間已到期。','This team room expired.'],['找不到組隊房間。','Team room not found.'],['這個位置已有人，請選擇空位。','This seat is taken. Choose an empty seat.'],['四位玩家都準備好後才能開始。','All four players must be ready before starting.'],['請等到你的操作時間。','Please wait for your turn.'],['計畫版本無效。','Invalid plan version.'],['回合已更新，請重新同步。','The round changed. Please reconnect.'],['你已鎖定，請等待揭曉。','Your move is locked. Wait for the reveal.'],['組隊暫時無法同步，請稍後再試。','The team room is unavailable. Please retry.'],['組隊動作無效。','Invalid team move.'],['點數不足或超過本回合改動上限。','Not enough points or the move exceeds this round’s limit.'],
 
  ['音樂不存在。','Track not found.'],['請選擇有效的音樂與使用場景。','Choose a valid track and scene.'],['請先購買這首音樂。','Buy this track first.'],
@@ -2733,6 +2746,10 @@ function installManualSteps(device,nativeAvailable){
 function installGameUrl(){return (location.protocol==='https:'&&location.origin?location.origin:'https://band-duel.bandduel-game.workers.dev')+'/play?install=1';}
 function renderInstall(){
   const device=installEnvironment(),installed=installState.standalone(),nativeAvailable=!!installState.prompt&&!device.ios&&!device.embedded;
+  const english=tx(false,true);
+  $('installLanguageLabel').textContent=tx('語言','Language');$('installLanguages').setAttribute('aria-label',tx('安裝說明語言','Installation guide language'));
+  $('installLanguageZh').textContent='繁體中文';$('installLanguageEn').textContent='English';
+  $('installLanguageZh').setAttribute('aria-pressed',String(!english));$('installLanguageEn').setAttribute('aria-pressed',String(english));
   const iosGuide=device.ios&&(device.chrome||device.safari),browserName=installBrowserName(device);
   const systemName=device.ios?(device.ipad?'iPad':'iPhone'):device.android?'Android':device.mac?'macOS':/Windows/i.test(navigator.userAgent||'')?'Windows':tx('電腦','Desktop');
   const environmentName=systemName+' · '+browserName;
@@ -2767,6 +2784,7 @@ async function copyInstallLink(){
 }
 function openInstallGuide(){renderInstall();$('installFeedback').textContent='';$('installUrl').hidden=true;if(!$('installDialog').open)$('installDialog').showModal();updateCoverMotion();}
 function initInstall(){
+  $('installLanguageZh').addEventListener('click',()=>setSiteLanguage('cn'));$('installLanguageEn').addEventListener('click',()=>setSiteLanguage('en'));
   window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installState.prompt=event;renderInstall();});
   window.addEventListener('appinstalled',()=>{installState.prompt=null;$('installApp').hidden=true;if($('installDialog').open)$('installDialog').close();});
   const displayMode=matchMedia('(display-mode: standalone)');if(displayMode.addEventListener)displayMode.addEventListener('change',renderInstall);else displayMode.addListener?.(renderInstall);

@@ -1,6 +1,13 @@
-let siteLanguage='cn';
-try{siteLanguage=new URLSearchParams(location.search).get('lang')||localStorage.getItem('band-language')||'cn';}catch{}
-if(!['cn','en'].includes(siteLanguage))siteLanguage='cn';
+function preferredSiteLanguage(){
+  const normalize=value=>value==='cn'||/^zh(?:-|$)/i.test(value||'')?'cn':/^en(?:-|$)/i.test(value||'')?'en':null;
+  const requested=normalize(new URLSearchParams(location.search).get('lang'));
+  if(requested)return requested;
+  try{const saved=normalize(localStorage.getItem('band-language'));if(saved)return saved;}catch{}
+  const browserLanguages=typeof navigator==='undefined'?[]:(navigator.languages?.length?navigator.languages:[navigator.language]);
+  for(const language of browserLanguages){const supported=normalize(language);if(supported)return supported;}
+  return 'cn';
+}
+let siteLanguage=preferredSiteLanguage();
 const tx=(cn,en)=>siteLanguage==='en'?en:cn;
 const translationPairs=new Map(),localizedNodes=new WeakMap(),localizedAttributes=new WeakMap();
 function addTranslations(pairs){for(const [cn,en] of pairs){translationPairs.set(cn,[cn,en]);if(!translationPairs.has(en))translationPairs.set(en,[cn,en]);}}
@@ -12,6 +19,7 @@ function translated(value){
 }
 const translationPatterns=[[/請手動輸入房號 ([A-Z2-9]+)/g,'Please enter room code $1 manually.'],[/電子伏特/g,'eV']];
 addTranslations([
+ ['離開房間','Leave room'],
  ['2v2 組隊試玩','2v2 team trial'],['這是 2v2 房間，請使用組隊入口。','This is a 2v2 room. Use the team entry.'],['這是 1v1 房間，請使用原本的房間入口。','This is a 1v1 room. Use the original room entry.'],['組隊正在同步，請再試一次。','The team room is syncing. Please retry.'],['組隊房間已滿。','This team room is full.'],['組隊房間已到期。','This team room expired.'],['找不到組隊房間。','Team room not found.'],['這個位置已有人，請選擇空位。','This seat is taken. Choose an empty seat.'],['四位玩家都準備好後才能開始。','All four players must be ready before starting.'],['請等到你的操作時間。','Please wait for your turn.'],['計畫版本無效。','Invalid plan version.'],['回合已更新，請重新同步。','The round changed. Please reconnect.'],['你已鎖定，請等待揭曉。','Your move is locked. Wait for the reveal.'],['組隊暫時無法同步，請稍後再試。','The team room is unavailable. Please retry.'],['組隊動作無效。','Invalid team move.'],['點數不足或超過本回合改動上限。','Not enough points or the move exceeds this round’s limit.'],
 
  ['音樂不存在。','Track not found.'],['請選擇有效的音樂與使用場景。','Choose a valid track and scene.'],['請先購買這首音樂。','Buy this track first.'],

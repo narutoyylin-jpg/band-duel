@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-const {chromium}=await import('file:///C:/Users/algra/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs');
+import {loadPlaywright} from './scripts/optional-tools.mjs';
+const {chromium}=await loadPlaywright();
 const browser=await chromium.launch({headless:true,channel:'msedge'}),errors=[];let testPage;
 try{
  const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,reducedMotion:'reduce'});

@@ -17,7 +17,8 @@ if(!live){server=http.createServer((req,res)=>{
  });await new Promise(r=>server.listen(serve?4187:0,'127.0.0.1',r));}
 const origin=live?'https://heterojunction-band-lab.opeuertio.chatgpt.site':'http://127.0.0.1:'+server.address().port;
 if(serve){console.log('Local: '+origin+'/lab');await new Promise(()=>{});}
-const {chromium}=await import('file:///C:/Users/algra/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs');
+import {loadPlaywright} from './scripts/optional-tools.mjs';
+const {chromium}=await loadPlaywright();
 const browser=await chromium.launch({headless:true,channel:'msedge'}),errors=[];
 try{
  const context=await browser.newContext({viewport:{width:1440,height:1000},reducedMotion:'reduce'}),page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));await page.goto(origin+(live?'/':'/lab'));

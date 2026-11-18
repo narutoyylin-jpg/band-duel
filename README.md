@@ -1,8 +1,25 @@
-# Band Duel
+# Band Duel & Semiconductor Heterojunctions
+
+這個儲存庫收錄目前版本的 Band Duel 遊戲，以及獨立的半導體異質接面動畫介紹。
+
+| 網站 | 最新線上版本 | 原始碼 |
+| --- | --- | --- |
+| Band Duel | [遊戲入口](https://band-duel.bandduel-game.workers.dev/play) | 本目錄 |
+| Semiconductor Heterojunctions | [中英文動畫介紹](https://semiconductor-heterojunctions.bandduel-game.workers.dev/) | [`heterojunction-introduction/`](heterojunction-introduction/) |
 
 以半導體能帶為主題的策略對戰遊戲。調整導帶、價帶的位置，推測對手的任務，在最後一回合讓電子與電洞形成有利的分布。
 
 [開始遊戲](https://band-duel.bandduel-game.workers.dev/play)
+
+## 手機安裝 / Mobile installation
+
+掃描下方 QR Code，或開啟[安裝引導](https://band-duel.bandduel-game.workers.dev/play?install=1)。引導內可直接切換「繁體中文／English」，並依瀏覽器顯示安裝步驟。
+
+Scan the QR code or open the [installation guide](https://band-duel.bandduel-game.workers.dev/play?install=1&lang=en). Choose English or 繁體中文 in the guide. It shows instructions for your browser.
+
+![Band Duel installation QR code](docs/band-duel-install-qr.png)
+
+[完整中英文安裝步驟 / Installation instructions](docs/INSTALL.md)
 
 ## 遊戲內容
 
@@ -46,7 +63,7 @@ node rematch-settings-check.mjs
 node pwa-check.mjs
 ```
 
-其餘 `*-check.mjs` 涵蓋技能、經濟、賽季、聊天與介面等功能；瀏覽器檢查可能另需 Playwright 與可用的瀏覽器環境。
+其餘 `*-check.mjs` 涵蓋技能、經濟、賽季、聊天與介面等功能。實際瀏覽器檢查另需 Playwright 與瀏覽器環境；可安裝 `npm install --no-save playwright`，或以 `PLAYWRIGHT_MODULE_PATH` 指向既有安裝。重新產生 App 圖示使用 Sharp，也可用 `SHARP_MODULE_PATH` 指定既有安裝。
 
 ## 原始碼位置
 
@@ -59,6 +76,7 @@ node pwa-check.mjs
 | `app/`、`google-auth.mjs` | 網頁與 API 路由、Google 登入驗證 |
 | `db/`、`drizzle/`、`standalone/` | 資料結構、遷移及獨立部署說明 |
 | `public/`、`build/`、`scripts/` | 靜態素材、PWA、建置與部署工具 |
+| `heterojunction-introduction/` | 最新十一幕中英文異質接面動畫介紹，獨立建置與部署 |
 
 ## 部署與授權
 

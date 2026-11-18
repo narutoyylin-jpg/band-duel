@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="description" content="半導體異質接面的能帶位差，如何讓電子與電洞侷限或分離？以同步動畫與互動實驗理解載子分布。">
+  <meta name="theme-color" content="#f5f5f7">
+  <title>Semiconductor Heterojunctions · 能帶互動實驗室</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23f5f5f7'/%3E%3Cpath d='M4 10h13v6h11' fill='none' stroke='%230077ed' stroke-width='3'/%3E%3Cpath d='M4 25h13v-5h11' fill='none' stroke='%23c36e27' stroke-width='3'/%3E%3C/svg%3E">
+  <!-- STORY_STYLE -->
+  <!-- STORY_DATA -->
+</head>
+<body>
+  <header class="topbar">
+    <button class="wordmark" id="homeButton" type="button" aria-label="回到開場">
+      <svg viewBox="0 0 34 30" aria-hidden="true"><path class="mark-c" d="M2 7h16v7h14"/><path class="mark-v" d="M2 25h16v-7h14"/><circle cx="9" cy="7" r="3"/></svg>
+      <span class="brand-full">Semiconductor Heterojunctions</span><span class="brand-short">Heterojunctions</span>
+    </button>
+    <nav class="top-actions" aria-label="頁面功能">
+      <button id="contentsButton" type="button">章節</button>
+      <button id="detailsButton" type="button">原理與模型</button>
+      <button id="languageButton" type="button" aria-label="Switch to English">EN</button>
+    </nav>
+  </header>
+
+  <main id="storyStage" class="stage" data-scene="overview">
+    <div class="scene-copy" id="sceneCopy">
+      <h1 id="sceneHeadline"></h1>
+      <p id="sceneLede"></p>
+    </div>
+    <figure class="visual-field" id="visualField">
+      <svg id="bandDiagram" role="img" aria-labelledby="diagramTitle diagramDescription">
+        <title id="diagramTitle"></title>
+        <desc id="diagramDescription"></desc>
+        <defs>
+          <linearGradient id="conductionTint" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0077ed" stop-opacity="0.015"/><stop offset="1" stop-color="#0077ed" stop-opacity="0.11"/></linearGradient>
+          <linearGradient id="valenceTint" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c36e27" stop-opacity="0.11"/><stop offset="1" stop-color="#c36e27" stop-opacity="0.015"/></linearGradient>
+          <radialGradient id="electronLight"><stop offset="0" stop-color="#a8d7ff"/><stop offset="0.5" stop-color="#2689ed"/><stop offset="1" stop-color="#0871d7"/></radialGradient>
+        </defs>
+        <g id="diagramGeometry"></g>
+      </svg>
+      <figcaption id="sceneInsight" class="scene-insight" aria-live="polite"></figcaption>
+      <div id="shareReadout" class="share-readout" hidden>
+        <div class="share-row electron-readout"><span class="carrier-name" data-label="electron">電子</span><span data-share="electron-a"></span><div class="share-track"><i id="electronShareA"></i><i id="electronShareB"></i></div><span data-share="electron-b"></span></div>
+        <div class="share-row hole-readout"><span class="carrier-name" data-label="hole">電洞</span><span data-share="hole-a"></span><div class="share-track"><i id="holeShareA"></i><i id="holeShareB"></i></div><span data-share="hole-b"></span></div>
+      </div>
+    </figure>
+    <div class="scene-controls">
+      <div class="segmented" id="outcomeControls" role="group" aria-label="比較侷限與分離"><button type="button" data-outcome="confine" aria-pressed="true">侷限在薄層</button><button type="button" data-outcome="separate" aria-pressed="false">分居兩側</button></div>
+      <div class="segmented" id="alignmentControls" role="group" aria-label="比較能帶排列" hidden><button type="button" data-alignment="I" aria-pressed="true">Type I · 同側</button><button type="button" data-alignment="II" aria-pressed="false">Type II · 分開</button></div>
+      <div class="application-controls" id="applicationControls" role="group" aria-label="選擇應用" hidden></div>
+      <div class="experiment-controls" id="experimentControls" hidden>
+        <div class="preset-row"><span id="alignmentReadout">Type I</span><button type="button" data-preset="I">Type I</button><button type="button" data-preset="II">Type II</button><button type="button" data-preset="zero">50 / 50</button></div>
+        <div class="sliders">
+          <label class="conduction-control" for="conductionOffset"><span>ΔEc <output id="conductionValue" for="conductionOffset">−0.08 eV</output></span><input id="conductionOffset" aria-label="導帶位差 ΔEc" type="range" min="-0.1" max="0.1" step="0.01" value="-0.08"></label>
+          <label class="valence-control" for="valenceOffset"><span>ΔEv <output id="valenceValue" for="valenceOffset">+0.08 eV</output></span><input id="valenceOffset" aria-label="價帶位差 ΔEv" type="range" min="-0.1" max="0.1" step="0.01" value="0.08"></label>
+          <label class="temperature-control" for="temperature"><span>T <output id="temperatureValue" for="temperature">300 K</output></span><input id="temperature" aria-label="溫度" type="range" min="200" max="500" step="10" value="300"></label>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="transport">
+    <button type="button" class="chapter-position" id="chapterPosition" aria-label="開啟章節選單"><span id="chapterNumber">01 / 09</span><span id="chapterName"></span></button>
+    <nav class="chapter-dots" id="chapterDots" aria-label="章節進度"></nav>
+    <div class="playback-controls">
+      <button class="icon-button" id="previousButton" type="button" aria-label="上一幕"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg></button>
+      <button class="icon-button" id="playButton" type="button" aria-label="暫停動畫"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="playIcon" d="M9 6v12M15 6v12"/></svg></button>
+      <button class="next-button" id="nextButton" type="button"><span>開始探索</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg></button>
+    </div>
+    <div class="timeline" role="progressbar" aria-label="本幕動畫進度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="timelineFill"></span></div>
+  </footer>
+
+  <dialog id="contentsDialog" class="modal contents-modal" aria-labelledby="contentsHeading"><div class="modal-heading"><h2 id="contentsHeading">章節</h2><button type="button" class="close-button" data-close aria-label="關閉">×</button></div><nav id="chapterList"></nav><a class="game-link" href="https://band-duel.bandduel-game.workers.dev/play" target="_blank" rel="noopener noreferrer">Band Duel ↗</a></dialog>
+  <dialog id="detailsDialog" class="modal details-modal" aria-labelledby="detailsHeading"><div class="modal-heading"><h2 id="detailsHeading"></h2><button type="button" class="close-button" data-close aria-label="關閉">×</button></div><div class="modal-body"><div id="chapterDetails"></div><details id="modelDetails"><summary id="modelHeading">模型假設</summary><div id="modelCopy"></div></details><div class="source-links" id="sourceLinks"></div></div></dialog>
+  <!-- STORY_SCRIPT -->
+</body>
+</html>
