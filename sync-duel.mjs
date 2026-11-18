@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+const path='lab.html';
+let html=fs.readFileSync(path,'utf8');
+const core=fs.readFileSync('duel-core.mjs','utf8').replace(/^export /gm,'');
+const fragment='/* DUEL BEGIN */\n'+core+'\n'+fs.readFileSync('duel.js','utf8')+'\n/* DUEL END */\n';
+if(html.includes('/* DUEL BEGIN */'))html=html.replace(/\/\* DUEL BEGIN \*\/[\s\S]*?\/\* DUEL END \*\/\r?\n/,fragment);
+else html=html.replace('function svgText',fragment+'function svgText');
+const roomFragment='/* ROOM BEGIN */\n'+fs.readFileSync('room.js','utf8')+'\n/* ROOM END */';
+if(html.includes('/* ROOM BEGIN */'))html=html.replace(/\/\* ROOM BEGIN \*\/[\s\S]*?\/\* ROOM END \*\//,roomFragment);
+else html=html.replace('/* ROOM SCRIPT */',roomFragment);
+fs.writeFileSync(path,html);

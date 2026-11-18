@@ -1,0 +1,1 @@
+ALTER TABLE `duel_players` ADD `avatar_id` text DEFAULT 'orb' NOT NULL;

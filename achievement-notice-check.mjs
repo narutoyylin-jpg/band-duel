@@ -1,0 +1,10 @@
+import fs from 'node:fs';import vm from 'node:vm';import assert from 'node:assert/strict';import {ACHIEVEMENTS} from './achievement-catalog.mjs';
+const elements=new Map(),callbacks=[];
+const context={ACHIEVEMENTS,ui:{data:{stage:'finished'}},motion:{verdictAcknowledged:false},leaderboardState:{data:null},document:{querySelector:()=>null},tx:(cn)=>cn,htmlText:x=>x,$:id=>{if(!elements.has(id))elements.set(id,{hidden:true,innerHTML:'',textContent:''});return elements.get(id);},setTimeout:fn=>{callbacks.push(fn);return callbacks.length;},clearTimeout:()=>{},openLeaderboard:()=>{},localStorage:{getItem:()=>null,setItem:()=>{}}};
+vm.createContext(context);vm.runInContext(fs.readFileSync('phone-achievements.js','utf8'),context);
+vm.runInContext("achievementState.queue.push('first-duel');showAchievementNotice();",context);assert(context.$('achievementToast').hidden,'notification waits for verdict acknowledgement');
+context.motion.verdictAcknowledged=true;callbacks.shift()();assert.equal(context.$('achievementToast').hidden,false);assert.equal(context.$('achievementToastName').textContent,'踏上能帶');
+callbacks.shift()();assert(context.$('achievementToast').hidden,'notification expires after being shown');
+context.document.querySelector=()=>({open:true});vm.runInContext("achievementState.queue.push('first-win');showAchievementNotice();",context);assert(context.$('achievementToast').hidden,'editors also delay notices');
+context.document.querySelector=()=>null;callbacks.shift()();assert.equal(context.$('achievementToastName').textContent,'第一道勝利');
+console.log('Passed: achievement notices wait for final verdict and open dialogs, then appear and dismiss.');

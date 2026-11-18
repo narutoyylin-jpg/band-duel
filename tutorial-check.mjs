@@ -1,0 +1,22 @@
+import fs from 'node:fs';import vm from 'node:vm';import assert from 'node:assert/strict';
+const ctx=vm.createContext({structuredClone,tx:(cn,en)=>en,visualType:r=>r.type,translated:value=>value,avatarMarkup:()=>'<span class="avatar-demo"></span>',signed:value=>(value>=0?'+':'')+value.toFixed(2),pct:value=>(value*100).toFixed(1)+'%'});
+vm.runInContext(fs.readFileSync('duel-core.mjs','utf8').replace(/^export /gm,'')+'\n'+fs.readFileSync('phone-tutorial.js','utf8')+'\n'+fs.readFileSync('phone-tutorial-animation.js','utf8'),ctx);
+for(const [variant,winner,reason] of [['different','cpu','type'],['ratio','player','ratio'],['draw','draw','unmatched'],['boundary','player','boundary']]){
+ ctx.variant=variant;const r=vm.runInContext("tutorialExample('scoring',variant)",ctx);assert.equal(r.decision.winner,winner);assert.equal(r.decision.reason,reason);assert.equal(r.result.stage,'finished');assert.equal(r.boards.length,4);
+}
+for(const [variant,winner,reason] of [['ii-ratio','player','ratio'],['ii-draw','draw','unmatched'],['ii-tie','draw','tie'],['tie','draw','tie']]){ctx.variant=variant;const r=vm.runInContext("tutorialExample('scoring',variant)",ctx);assert.equal(r.decision.winner,winner);assert.equal(r.decision.reason,reason);if(winner!=='draw'||reason==='tie')assert.equal(r.decision.type,variant.startsWith('ii-')?'Type II':'Type I');}
+const topics=vm.runInContext('[...tutorialTopics]',ctx);assert.equal(topics.length,10);
+for(const topic of topics){
+ ctx.topic=topic;const lesson=vm.runInContext('tutorialLesson(topic)',ctx);assert(lesson.title.length>0);assert(vm.runInContext('tutorialExample(topic).boards.length>=3',ctx));
+ if(topic!=='scoring')assert.equal(lesson.captions.length,lesson.labels.length,'every animation step has a matching caption');
+ vm.runInContext('tutorialTab=topic;tutorialMotion.example=tutorialExample(topic);',ctx);
+ for(let step=0;step<lesson.labels.length;step++){ctx.step=step;const markup=vm.runInContext('tutorialMotion.step=step;demoScreenMarkup(topic,step)',ctx);assert(markup.includes('<svg')||markup.includes('demo-mode-option')||markup.includes('demo-coin-view')||markup.includes('demo-role'),topic+' step '+step+' has a visual');assert(!markup.includes('undefined'),topic+' markup is complete');assert(vm.runInContext('tutorialCaption().length>0',ctx),topic+' caption is complete');}
+}
+for(const [topic,expected] of [['team',/same-role opponent/],['skills',/three free random offers/],['matching',/15 more seconds/]]){ctx.topic=topic;assert.match(vm.runInContext('tutorialLesson(topic).captions.join(" ")+tutorialLesson(topic).details',ctx),expected);}
+assert.match(vm.runInContext('tutorialLesson("matching").captions.at(-1)',ctx),/Ranked counts normally even with CPU fill/);
+assert.match(vm.runInContext('tutorialLesson("controls").details',ctx),/With it off, players lock manually with no timeout/);
+const teamStart=vm.runInContext('tutorialTeamFrame(0)',ctx),teamEnd=vm.runInContext('tutorialTeamFrame(1)',ctx);assert.deepEqual(Object.keys(teamStart),['aEc','bEc','aEv','bEv']);for(const key of Object.keys(teamStart))assert.notEqual(teamStart[key],teamEnd[key],'all four slots contribute to the reveal');ctx.board=teamEnd;assert.equal(vm.runInContext('carrierModel((board.bEc-board.aEc)*.02,(board.bEv-board.aEv)*.02).type',ctx),'Type II');
+const bands=vm.runInContext("tutorialExample('bands').boards",ctx);ctx.board=bands[1];assert.equal(vm.runInContext('carrierModel(board.ec*.02,board.ev*.02).electronB>0.9',ctx),true);assert.equal(vm.runInContext('carrierModel(board.ec*.02,board.ev*.02).holeB',ctx),.5);ctx.board=bands[2];assert.equal(vm.runInContext('carrierModel(board.ec*.02,board.ev*.02).type',ctx),'Type I');
+const reveal=vm.runInContext("tutorialExample('reveal','different')",ctx);ctx.board=reveal.boards[1];assert.equal(vm.runInContext('carrierModel(board.ec*.02,board.ev*.02).type',ctx),'Type I');ctx.board=reveal.boards[2];assert.equal(vm.runInContext('carrierModel(board.ec*.02,board.ev*.02).type',ctx),'Type II');
+const source=fs.readFileSync('phone-tutorial-animation.js','utf8');assert(!source.includes('data-demo-offset-input'));assert(!source.includes('demoPlay'));assert(source.includes('data-title-replay'));assert(source.includes('Type II vs Type II'));
+console.log('Passed: ten complete animation lessons, all step visuals/captions, same-Type I/II ratios, boundary teaching, team reveal/MVP, free ability draft, CPU-filled Ranked, queue grace period and optional custom-room clock.');

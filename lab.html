@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="比較 Type I、Type II 異質接面的能帶排列與用途，調整位差觀察載子分布，再用 Shuffle 電腦對戰與手機雙人房間練習。">
+  <title>半導體異質接面｜能帶互動實驗</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23112440'/%3E%3Cpath d='M5 11h11v5h11' stroke='%236ab5ff' stroke-width='3' fill='none'/%3E%3Cpath d='M5 25h11v-5h11' stroke='%23ffb35c' stroke-width='3' fill='none'/%3E%3C/svg%3E">
+  <style>
+    :root{--ink:#162b45;--muted:#5b6b80;--line:#dce4ed;--blue:#2267d1;--orange:#bc5d0c;--page:#f0f4f8;--white:#fff;--shadow:0 10px 36px #19324d08}
+    *{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--ink);font:16px/1.65 "Segoe UI","Microsoft JhengHei",sans-serif}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid #2267d1;outline-offset:4px}button:disabled{cursor:default}main{max-width:1260px;margin:auto;padding:30px 32px 40px}.masthead{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:14px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:11px;font-weight:700;letter-spacing:.08em}.brand svg{width:34px;height:34px}.temperature{color:var(--muted);padding:6px 12px;border:1px solid var(--line);border-radius:30px;background:#ffffff80}.title-row{display:flex;justify-content:space-between;align-items:flex-end;gap:25px;margin-bottom:25px}h1{font-size:clamp(28px,3.4vw,44px);line-height:1.3;letter-spacing:-.035em;margin:0 0 9px;font-weight:750}.english{color:var(--muted);font-size:16px;letter-spacing:.015em;margin:0}.lead{margin:0;max-width:430px;font-size:16px;line-height:1.8}.lead strong:first-child{color:var(--blue)}.lead strong:last-child{color:var(--orange)}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 344px;gap:18px;align-items:stretch}.panel{background:var(--white);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}.panel-head{display:flex;justify-content:space-between;align-items:center;padding:20px 24px 0;gap:12px}h2{font-size:19px;line-height:1.45;margin:0;font-weight:700}.micro{font-size:14px;color:var(--muted)}.presets{display:flex;gap:8px;flex-wrap:wrap;padding:15px 24px 5px}.preset{border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--muted);padding:7px 11px;font-size:14px;transition:background .15s}.preset:hover{background:#f0f5fc;border-color:#adc7eb}.preset[aria-pressed=true]{background:#162b45;border-color:#162b45;color:white}.graph-wrap{padding:0 10px}#bandDiagram{display:block;width:100%;height:390px;overflow:visible}.legend{display:flex;gap:24px;flex-wrap:wrap;padding:0 24px 19px;font-size:14px;color:var(--muted)}.legend span{display:flex;align-items:center;gap:8px}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--blue)}.dot.hole{background:#fff;border:2px solid var(--orange)}.control-panel{padding:22px 24px}.control-panel h2{margin-bottom:20px}.control{margin:0 0 23px}.control-title{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:15px;font-weight:650}.value{font-variant-numeric:tabular-nums;color:var(--blue);font-size:21px;white-space:nowrap}.value small{font-size:14px;color:var(--muted);font-weight:400}.control.holes .value{color:var(--orange)}.formula-def{color:var(--muted);font-size:14px;margin:3px 0 11px}.slider-line{display:flex;align-items:center;gap:12px}.nudge{flex:none;display:grid;place-items:center;width:30px;height:30px;border:1px solid var(--line);border-radius:7px;background:#fff;font-size:20px;color:var(--muted);line-height:1}.nudge:hover{background:#f0f4f8}input[type=range]{width:100%;margin:0;accent-color:var(--blue);height:28px;cursor:pointer;min-width:0}.holes input[type=range]{accent-color:var(--orange)}.range-labels{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);padding:0 42px}.direction{font-size:14px;margin:9px 0 0;color:var(--blue)}.holes .direction{color:var(--orange)}.result{padding:17px 18px;background:#f0f5fb;border:1px solid #dfe8f4;border-radius:12px;margin-top:6px}.result-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}.type-label{font-size:13px;background:#dce8f8;padding:2px 8px;border-radius:5px;font-weight:700}.result strong{font-size:17px}.result p{font-size:14px;line-height:1.75;margin:0;color:#4a5d76}.reset{margin-top:16px;border:0;background:none;text-decoration:underline;text-underline-offset:4px;color:var(--muted);font-size:14px;padding:3px 0}.distribution{margin-top:18px}.distribution .panel-head{padding-bottom:15px}.dist-grid{display:grid;grid-template-columns:1fr 1fr}.dist-card{padding:0 24px 20px}.dist-card+ .dist-card{border-left:1px solid var(--line)}.dist-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:15px;font-weight:650}.dist-title span:first-child{display:flex;align-items:center;gap:8px}.dist-title .carrier-target{font-size:14px;font-weight:400;color:var(--muted)}.share-values{display:flex;justify-content:space-between;gap:12px;font-size:14px;margin-top:8px;font-variant-numeric:tabular-nums}.share-values b{font-size:20px;font-weight:700}.electrons .share-values b{color:var(--blue)}.holes-share .share-values b{color:var(--orange)}.share-track{display:flex;height:12px;overflow:hidden;border-radius:5px;background:#f1f4f8;position:relative}.share-a{background:#2267d1;transition:width .45s}.share-b{background:#8cb5f0;transition:width .45s}.holes-share .share-a{background:#bc5d0c}.holes-share .share-b{background:#edb781}.density{display:block;width:100%;height:90px;margin-top:12px}.dist-caption{font-size:14px;color:var(--muted);margin:0;padding:0 24px 20px}.explanation{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.note{border-top:2px solid #b9cde5;padding:16px 3px 0}.note h3{font-size:16px;margin:0 0 7px}.note p{font-size:15px;color:var(--muted);line-height:1.85;margin:0}.note strong{color:var(--ink)}details{margin-top:25px;border-top:1px solid var(--line);padding-top:14px}summary{cursor:pointer;font-size:14px;color:var(--muted);width:fit-content}.model-body{padding:15px 0 0;max-width:1000px;color:var(--muted);font-size:14px}.model-body p{margin:0 0 12px}.equations{display:flex;gap:30px;flex-wrap:wrap;color:var(--ink);font-size:16px;margin-bottom:12px}.model-body a{color:var(--blue);text-underline-offset:3px}.footer{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:22px;font-size:13px;color:var(--muted)}.footer a{color:var(--muted);text-underline-offset:3px}.plot-line{fill:none;stroke-width:3;stroke-linejoin:round}.particle{transition:transform .6s ease}.band-text{font-family:"Segoe UI","Microsoft JhengHei",sans-serif}.svg-muted{fill:#63758a}.svg-blue{fill:#2267d1}.svg-orange{fill:#bc5d0c}@media(max-width:1050px){.title-row{display:block}.lead{max-width:none;margin-top:15px}.workspace{grid-template-columns:minmax(0,1fr) 305px}.control-panel{padding:22px 20px}.value{font-size:19px}}@media(max-width:760px){main{padding:20px 16px 28px}.masthead{margin-bottom:20px}.brand{font-size:13px;letter-spacing:.015em}.temperature{font-size:13px;padding:5px 8px}.workspace{grid-template-columns:1fr}.title-row{margin-bottom:20px}.panel-head{padding:17px 18px 0}.presets{padding:14px 18px 5px;gap:6px}.preset{font-size:14px;padding:6px 9px}.legend{padding:0 18px 17px;gap:18px}.control-panel{padding:20px}.control-panel h2{margin-bottom:18px}.controls-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}.control{margin-bottom:18px}.control-title{flex-wrap:wrap;gap:4px}.range-labels{padding:0}.slider-line{gap:6px}.nudge{width:28px}.dist-grid{grid-template-columns:1fr}.dist-card{padding:0 18px 20px}.dist-card+ .dist-card{border-left:0;border-top:1px solid var(--line);padding-top:18px}.dist-caption{padding:0 18px 18px}.distribution .panel-head{align-items:flex-start;flex-direction:column;gap:5px;padding-bottom:13px}.explanation{grid-template-columns:1fr;gap:20px}.english{font-size:14px}h1{font-size:29px}.lead{font-size:15px}.footer{font-size:13px}}@media(max-width:420px){.controls-grid{grid-template-columns:1fr;gap:0}.control-title{flex-wrap:nowrap}.range-labels{padding:0 35px}.brand svg{width:29px;height:29px}.temperature{font-size:12px}.panel-head .micro{font-size:13px}.share-values b{font-size:19px}}@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+    [hidden]{display:none!important}.mode-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}.mode-switch{display:flex;padding:4px;background:#e3eaf3;border:1px solid #d4deeb;border-radius:10px;gap:4px}.mode-switch button{padding:8px 15px;background:transparent;border:0;border-radius:7px;font-size:15px;color:var(--muted)}.mode-switch button[aria-pressed=true]{background:white;color:var(--ink);box-shadow:0 2px 7px #11243c12;font-weight:650}.mode-note{font-size:14px;color:var(--muted)}.challenge{padding:20px 24px;margin-bottom:18px;border-color:#b3cbe9;background:linear-gradient(120deg,#f6faff,#fff 70%)}.challenge-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}.round-label{display:block;color:var(--blue);font-size:14px;font-weight:650;margin-bottom:3px}.challenge h2{font-size:21px}.challenge-story{margin:7px 0 12px;color:var(--muted);font-size:15px;max-width:790px}.scoreboard{flex:none;display:flex;align-items:center;gap:13px;padding:9px 14px;border:1px solid #d4deeb;border-radius:10px;background:#fff;font-size:14px;text-align:center}.scoreboard strong{display:block;font-size:23px;font-variant-numeric:tabular-nums;line-height:1.25}.scoreboard .you{color:var(--blue)}.scoreboard .versus{color:var(--muted);font-size:13px}.challenge-rule{font-size:14px;color:var(--muted);margin:0 0 14px}.goal-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}.goal{padding:11px 14px;border:1px solid #e0e7f0;border-radius:10px;background:white;font-size:14px}.goal-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.goal-head b{font-size:18px;font-variant-numeric:tabular-nums}.goal small{display:block;font-size:13px;color:var(--muted);margin-top:2px}.goal-track{height:5px;background:#e7edf5;overflow:hidden;margin:8px 0 3px;border-radius:5px}.goal-track span{height:100%;display:block;background:var(--blue);transition:width .2s}.goal.hole-goal .goal-track span{background:var(--orange)}.goal.met{border-color:#8bb8a7}.goal.met .goal-head b{color:#21614b}.budget.met .goal-track span{background:#327760}.challenge-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:15px}.primary,.secondary{border-radius:8px;padding:9px 15px;border:1px solid #bdcde0;font-size:14px}.primary{background:#162b45;color:#fff;border-color:#162b45;font-weight:600}.primary:hover{background:#244365}.secondary{background:white;color:var(--ink)}.secondary:hover{background:#edf4ff}.primary:disabled,.secondary:disabled,.preset:disabled{opacity:.45;cursor:default}.attempts{font-size:14px;color:var(--muted);margin-left:auto}.challenge-feedback{margin:13px 0 0;padding:12px 14px;border-radius:9px;background:#eaf1fa;color:#3a5575;font-size:15px;line-height:1.8}.challenge-feedback[data-tone=success]{background:#e7f4ed;color:#215e45}.challenge-feedback[data-tone=error]{background:#fff1e5;color:#854a13}.challenge-hint{margin:10px 0 0;font-size:14px;color:#56697f;border-left:3px solid #b6cbe6;padding-left:12px}.impact{border-top:1px solid var(--line);padding:18px 24px;background:#f8fafc;display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:24px}.impact h3{font-size:16px;margin:0 0 6px}.impact p{font-size:15px;color:var(--muted);margin:0;line-height:1.85}.thermal{font-size:14px;line-height:1.8;color:var(--muted)}.thermal b{color:var(--ink);font-weight:650}.thermal span{display:block}.thermal .weak{color:#995714;font-size:13px;margin-top:4px}.comparison{margin-top:28px}.comparison-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:14px}.comparison-head h2{font-size:23px}.comparison-head p{font-size:15px;color:var(--muted);margin:0}.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.type-card{padding:23px 24px;border:1px solid var(--line);border-radius:16px;background:white}.type-card.current{border-color:#6d9acb;box-shadow:inset 0 3px #2267d1}.type-header{display:flex;align-items:center;justify-content:space-between;gap:12px}.type-header h3{font-size:24px;line-height:1.25;margin:0}.type-header .type-sub{font-size:14px;color:var(--muted);margin:4px 0 0}.current-tag{font-size:13px;color:var(--blue);background:#edf4ff;border-radius:5px;padding:3px 8px;white-space:nowrap;visibility:hidden}.type-card.current .current-tag{visibility:visible}.mini-band{display:block;width:100%;height:154px;margin:13px 0 11px}.type-card dl{margin:0}.type-card dl>div{padding:11px 0;border-top:1px solid #e4eaf1}.type-card dt{font-weight:650;font-size:15px;margin-bottom:4px}.type-card dd{margin:0;color:var(--muted);font-size:15px;line-height:1.8}.type-card dd strong{color:var(--ink)}.type-caution{font-size:14px;color:var(--muted);background:#f5f8fc;padding:12px 14px;border-radius:8px;margin:13px 0 16px;line-height:1.85}.type-actions{display:flex;gap:8px;flex-wrap:wrap}.term-note{font-size:14px;color:var(--muted);margin:13px 2px 0;line-height:1.8}.challenge-exit{background:none;border:0;color:var(--muted);font-size:14px;padding:8px;text-decoration:underline;text-underline-offset:3px}.quick-experiments{margin-top:18px;padding:17px 22px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}.quick-experiments h3{margin:0;font-size:16px}.quick-experiments p{margin:0;font-size:14px;color:var(--muted)}.quick-experiments .type-actions{margin-left:auto}@media(max-width:850px){.impact{grid-template-columns:1fr;gap:12px}.thermal{display:flex;gap:8px 20px;flex-wrap:wrap}.thermal .weak{width:100%}.goal-grid{grid-template-columns:1fr 1fr}.goal.budget{grid-column:1/-1}.type-card{padding:20px}.type-card dd{font-size:14px}}@media(max-width:760px){.mode-bar{align-items:flex-start;flex-direction:column;gap:7px}.mode-switch{width:100%}.mode-switch button{flex:1}.challenge{padding:17px 18px}.challenge-top{gap:10px}.challenge h2{font-size:19px}.scoreboard{gap:8px;padding:8px 10px}.scoreboard strong{font-size:21px}.challenge-story{font-size:14px}.goal-grid{gap:8px}.goal{padding:10px}.goal-head{align-items:flex-start;flex-direction:column;gap:3px}.goal-head b{font-size:18px}.attempts{margin-left:0;width:100%}.impact{padding:17px 18px}.type-grid{grid-template-columns:1fr}.comparison-head h2{font-size:21px}.comparison-head{gap:5px}.quick-experiments{padding:17px 18px;gap:8px}.quick-experiments .type-actions{margin:5px 0 0;width:100%}.type-card dd{font-size:15px}.current-tag{font-size:12px}.mode-note{font-size:13px}.challenge-actions{gap:8px}}@media(max-width:390px){.challenge-top{flex-wrap:wrap}.scoreboard{width:100%;justify-content:center}.goal-head span{font-size:13px}}
+    .game-active{padding-top:20px}.game-active .masthead{margin-bottom:12px}.game-active .title-row{margin-bottom:14px}.game-active h1{font-size:30px;margin-bottom:3px}.game-active .english{font-size:14px}.game-active .lead{display:none}.game-active .mode-bar{margin-bottom:14px}.game-active .challenge{padding:15px 20px;margin-bottom:16px}.game-active .challenge-top{align-items:center}.game-active .challenge h2{font-size:19px}.game-active .round-label{font-size:13px;margin-bottom:2px}.game-active .scoreboard{padding:7px 12px}.game-active .scoreboard strong{display:inline;font-size:21px;margin-left:6px}.game-active .challenge-story{margin:7px 0 12px;max-width:none;font-size:14px}.game-active .goal{padding:8px 12px}.game-active .goal-track{margin:6px 0 2px}.game-active .goal small{font-size:13px}.game-active .control-panel h2{margin-bottom:14px}.game-active .control{margin-bottom:15px}.game-active .formula-def{margin-bottom:7px}.game-active .direction{margin-top:6px}#challengeControls .challenge-actions{margin-top:17px}#challengeControls .attempts{margin-left:0;width:100%}#challengeControls .challenge-feedback{font-size:14px;padding:10px 12px}#challengeControls .challenge-rule{font-size:13px;margin:12px 0 0}#challengeControls .challenge-exit{padding:4px 0}#challengeControls .challenge-hint{font-size:14px}.game-active .reset{margin-top:12px}@media(max-width:760px){.game-active .workspace .control-panel{order:-1}.game-active .challenge{padding:14px 16px}.game-active h1{font-size:27px}.game-active .mode-note{display:none}.game-active .goal-head{flex-direction:row;align-items:center;flex-wrap:wrap}.game-active .challenge-top{flex-wrap:nowrap}.game-active .scoreboard{padding:7px 9px;gap:7px}.game-active .scoreboard strong{margin-left:3px;font-size:19px}.game-active .challenge h2{font-size:18px}}@media(max-width:390px){.game-active .scoreboard{width:auto;flex-direction:column;gap:0}.game-active .scoreboard .versus{display:none}}
+    .mode-detail{white-space:nowrap}@media(max-width:420px){.mode-detail{display:block;font-size:14px}}
+    .room-active>#modelDetails{display:none}
+</style>
+  <style>
+    .mode-switch{flex-wrap:wrap}.battle-panel{margin:0 0 18px;padding:20px 24px;background:linear-gradient(120deg,#edf4ff,#fff);border-color:#a9c1df}.battle-heading{display:flex;align-items:center;justify-content:space-between;gap:16px}.battle-heading h2{font-size:22px}.battle-kicker{color:var(--blue);font-size:13px;font-weight:700;letter-spacing:.04em}.battle-round{font-size:14px;border:1px solid #c6d6ea;background:#fff;border-radius:8px;padding:6px 12px;white-space:nowrap}.battle-intro{margin:7px 0 15px;color:var(--muted);font-size:14px}.battle-settings{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.battle-settings label{font-size:14px;color:var(--muted);display:flex;gap:8px;align-items:center}.battle-settings select,.battle-choice select{font:inherit;border:1px solid #b9cbe0;background:#fff;border-radius:7px;padding:6px 9px;max-width:100%;color:var(--ink)}.battle-missions{display:grid;grid-template-columns:1fr 1fr;gap:12px}.battle-mission{padding:12px 16px;background:#fff;border:1px solid #d7e2ee;border-radius:10px}.battle-mission.you{border-left:4px solid var(--blue)}.battle-mission.cpu{border-left:4px solid #8172a8}.battle-mission header{display:flex;justify-content:space-between;gap:8px;font-size:14px}.battle-mission header b{font-size:19px}.battle-mission h3{font-size:16px;margin:3px 0}.battle-mission p{font-size:13px;color:var(--muted);margin:3px 0}.battle-progress{display:flex;gap:12px;justify-content:space-between;font-size:14px;margin-top:7px;font-variant-numeric:tabular-nums}.battle-progress strong{color:var(--blue)}.battle-track{height:5px;border-radius:5px;background:#e4eaf2;overflow:hidden;margin:6px 0}.battle-track span{display:block;height:100%;background:#2267d1;transition:width .2s}.cpu .battle-track span{background:#8172a8}.battle-budget{font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}.battle-controls fieldset{padding:0;margin:13px 0 0;border:0;min-width:0}.battle-controls legend{font-size:14px;font-weight:650;margin-bottom:6px}.battle-controls label.choice-radio{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;margin:6px 0;background:#fff}.battle-controls label.choice-radio:has(input:checked){background:#edf4ff;border-color:#8bb0dc}.battle-controls input[type=radio]{accent-color:var(--blue)}.battle-choice{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:11px;font-size:14px}.secret-status{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:5px;background:#f0ecf7;color:#665588;font-size:12px}.secret-status::before{content:'●';font-size:8px}.battle-cost{font-size:14px;margin:12px 0 0;color:var(--muted)}.battle-cost.over{color:#9c3d23}.battle-preview{margin:12px 0;background:#f4f7fc;border:1px dashed #b8cce3;border-radius:9px;padding:10px 12px;font-size:13px;color:var(--muted);line-height:1.8}.battle-preview b{color:var(--ink)}.battle-controls .primary{width:100%;margin-top:4px}.battle-controls .secondary{margin-top:10px;width:100%}.battle-feedback{margin:14px 0 0;padding:13px 16px;border:1px solid #cbdcec;border-radius:10px;background:#fff;font-size:14px;line-height:1.8}.battle-feedback[data-tone=success]{border-color:#92bea9;background:#edf7f1}.battle-feedback[data-tone=error]{border-color:#e4c49c;background:#fff6ec}.battle-feedback b{font-size:16px}.battle-help{font-size:13px;color:var(--muted);line-height:1.8;margin:10px 0 0}.battle-panel details{margin-top:13px;padding-top:10px}.battle-panel details p{font-size:14px;color:var(--muted);margin:8px 0}.battle-history{margin-top:18px}.battle-history summary{font-size:15px;font-weight:650;color:var(--ink)}.history-scroll{overflow:auto;margin-top:12px}.battle-history table{border-collapse:collapse;width:100%;min-width:620px;font-size:14px;text-align:left}.battle-history th,.battle-history td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}.battle-history th{color:var(--muted);font-size:13px}.battle-history td small{display:block;font-size:12px;color:var(--muted)}.battle-active .controls-grid,.battle-active .control-panel>.result,.battle-active #reset{display:none}.battle-active .workspace{grid-template-columns:minmax(0,1fr) 330px}.battle-active .workspace .panel-head{padding-bottom:9px}.battle-active .control-panel h2{margin-bottom:8px}.battle-active #bandDiagram{height:350px}.battle-active .battle-panel{padding:16px 20px}.battle-active .battle-settings{margin-bottom:11px}.battle-public-note{font-size:13px;color:var(--muted);padding:0 24px 13px}.battle-active .mode-note{display:none}.battle-mission.met{background:#f2f9f5}.battle-active .battle-progress{font-size:13px}.battle-active .controls-grid input{pointer-events:none}@media(max-width:760px){.mode-switch button{padding:7px 10px;font-size:14px}.mode-switch{display:grid;grid-template-columns:1fr 1fr}.mode-switch #battleMode{grid-column:1/-1}.battle-active .workspace{grid-template-columns:1fr}.battle-heading h2{font-size:19px}.battle-round{font-size:13px;padding:5px 8px}.battle-panel,.battle-active .battle-panel{padding:15px 16px}.battle-settings{gap:8px}.battle-settings label{width:100%;justify-content:space-between;font-size:13px}.battle-settings select{font-size:13px;max-width:69%}.battle-missions{gap:8px}.battle-mission{padding:10px}.battle-mission header{flex-wrap:wrap;gap:1px}.battle-mission h3{font-size:14px}.battle-progress{flex-wrap:wrap;gap:2px}.battle-budget{flex-wrap:wrap;gap:2px}.battle-public-note{padding:0 18px 13px}.battle-intro{margin-bottom:12px}.battle-history th,.battle-history td{padding:9px 10px}.battle-active #bandDiagram{height:370px}.battle-heading{align-items:flex-start}.battle-controls .primary{padding:11px 15px}.battle-feedback{padding:11px 12px}} 
+    .battle-panel.playing .battle-intro,.battle-panel.playing .battle-settings{display:none}.battle-panel.playing .battle-missions{margin-top:12px}.battle-panel.playing .battle-mission{padding-top:9px;padding-bottom:9px}.battle-panel.playing .battle-progress strong{display:none}.battle-panel.playing .battle-track{margin:4px 0}.battle-panel.playing details{margin-top:9px;padding-top:8px}.battle-panel.playing .battle-mission h3{margin:2px 0}.battle-panel.playing .battle-mission p{margin:2px 0}#battleReset{display:block;font-size:13px;margin-top:10px}.battle-active .battle-feedback{margin-top:18px}
+  </style>
+<style>
+    .battle-visibility{font-size:12px;color:var(--muted);margin:9px 0 0}.battle-panel.playing .battle-progress strong{display:block;font-size:13px}.battle-progress{align-items:center;flex-wrap:wrap;gap:3px 12px}.battle-share-e{color:var(--blue)}.battle-share-h{color:var(--orange)}.battle-progress strong{white-space:nowrap}.battle-offset{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line)}.battle-edit-label{font-size:12px;color:var(--muted);margin:0 0 5px}.battle-offset .control-title{font-size:14px}.battle-offset .value{font-size:21px}.battle-offset .formula-def{font-size:13px;margin-bottom:7px}.battle-offset .range-labels{font-size:12px;padding:0 39px}.battle-baseline{font-size:13px;color:var(--muted);margin:7px 0 0;font-variant-numeric:tabular-nums}.battle-offset input:disabled{cursor:default;opacity:.4}.battle-nudge:disabled{opacity:.4}.battle-controls .battle-cost{font-size:13px}.battle-controls .battle-help{font-size:13px}.battle-active .battle-controls .battle-offset .value{font-size:21px}
+    @media(max-width:760px){.battle-heading{display:grid;grid-template-columns:1fr;gap:6px}.battle-round{justify-self:start}.battle-kicker{font-size:12px}.battle-heading h2{font-size:19px}.battle-budget{font-size:12px}.battle-offset .control-title{flex-wrap:nowrap}.battle-panel.playing .battle-progress strong{font-size:12px}}
+  </style>
+  <style>
+    .room-panel{padding:22px 24px;margin-bottom:18px;border-color:#acc4df;background:linear-gradient(125deg,#eef5ff,#fff)}.room-panel h2{font-size:22px}.room-intro{margin:7px 0 18px;color:var(--muted);font-size:14px}.room-lobby-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.room-lobby-card{padding:18px;border:1px solid var(--line);background:#fff;border-radius:12px}.room-lobby-card h3{font-size:17px;margin:0 0 5px}.room-lobby-card p{font-size:14px;color:var(--muted);margin:0 0 13px}.room-join-line{display:flex;gap:8px;align-items:center}.room-code-input{border:1px solid #b8cbe2;border-radius:8px;min-width:0;width:170px;padding:9px 12px;font:600 18px/1.3 Consolas,monospace;letter-spacing:.13em;text-transform:uppercase}.room-error{margin:12px 0 0;padding:10px 14px;border:1px solid #ebc69c;border-radius:8px;background:#fff3e5;color:#884b14;font-size:14px}.room-top{display:flex;justify-content:space-between;align-items:center;gap:16px}.room-code-chip{font-size:14px;border:1px solid #c6d6ea;background:#fff;border-radius:8px;padding:6px 12px}.room-code-chip b{font-family:Consolas,monospace;font-size:18px;letter-spacing:.08em}.room-score{display:flex;gap:12px;align-items:center;white-space:nowrap;font-size:14px}.room-score b{font-size:23px;color:var(--blue)}.room-score span:last-child b{color:#8172a8}.room-personal{background:#fff;border:1px solid #d4e0ee;border-left:4px solid var(--blue);border-radius:10px;margin-top:15px;padding:14px 17px}.room-role{font-size:13px;color:var(--muted)}.room-personal h3{font-size:18px;margin:4px 0}.room-personal p{font-size:14px;margin:3px 0}.room-status{margin:12px 0 0;font-size:14px;color:#536983}.room-share{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:14px}.room-share p{margin:0;font-size:14px;color:var(--muted)}.room-action-bar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:13px}.room-action-bar .reset{margin:0 0 0 auto}.room-results{margin-top:12px;padding:12px 15px;background:#f3f7fc;border:1px solid #d5e2f1;border-radius:9px;font-size:14px;line-height:1.8}.room-results b{font-size:16px}.room-rules{font-size:13px;color:var(--muted);line-height:1.85;margin-top:17px}.room-rules p{margin:7px 0}.room-active .mode-note{display:none}.room-active .controls-grid,.room-active .control-panel>.result,.room-active #reset{display:none}.room-active .workspace{grid-template-columns:minmax(0,1fr) 330px;align-items:start}.room-active #bandDiagram{height:350px}.room-active .comparison,.room-active .explanation,.room-active main>details,.room-active .distribution .impact{display:none}.room-active .distribution{margin-top:18px}.room-lobby .workspace,.room-lobby .distribution{display:none}.room-waiting{padding:16px 0;color:var(--muted);font-size:14px}.room-panel details{margin-top:15px;padding-top:10px}.room-badge{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}.room-history small{display:block;color:var(--muted)}
+    @media(max-width:760px){.mode-switch{grid-template-columns:repeat(3,1fr)}.mode-switch #battleMode{grid-column:auto}.mode-switch button{font-size:13px;padding:7px 8px}.room-panel{padding:17px 16px}.room-panel h2{font-size:20px}.room-lobby-grid{grid-template-columns:1fr;gap:12px}.room-lobby-card{padding:16px}.room-top{align-items:flex-start;flex-wrap:wrap;gap:8px}.room-code-chip{padding:5px 9px}.room-score{font-size:13px}.room-score b{font-size:20px}.room-personal{padding:12px 13px}.room-personal h3{font-size:17px}.room-active .workspace{grid-template-columns:1fr}.room-active .workspace .control-panel{order:-1}.room-join-line .room-code-input{flex:1}.room-action-bar .reset{margin-left:0}.room-results{font-size:13px}.room-role{font-size:12px}}
+  </style></head>
+<body>
+<main>
+  <header>
+    <div class="masthead"><div class="brand"><svg viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="8" fill="#162b45"/><path d="M6 11h11v5h11" stroke="#79baff" stroke-width="2.5" fill="none"/><path d="M6 25h11v-5h11" stroke="#ffb15b" stroke-width="2.5" fill="none"/></svg>能帶互動實驗</div><div class="temperature">室溫 300 K · 約 27 °C</div></div>
+    <div class="title-row"><div><h1>半導體異質接面</h1><p class="english">Semiconductor Heterojunctions</p></div><p class="lead">電子偏向<strong>導帶底較低</strong>的一側；電洞偏向<strong>價帶頂較高</strong>的一側。調整兩個位差，看看它們會聚在一起，還是分開。</p></div>
+  </header>
+  <div class="mode-bar"><div class="mode-switch" role="group" aria-label="選擇互動模式"><button id="exploreMode" aria-pressed="true">自由探索</button><button id="battleMode" aria-pressed="false">Shuffle · 電腦對戰</button><button id="roomMode" aria-pressed="false">雙人房間</button></div><span class="mode-note" id="modeNote">先試範例，再用滑桿探索。</span></div>
+  <section class="panel room-panel" id="roomPanel" aria-label="雙人房間對戰" hidden>
+    <div id="roomLobby"><span class="battle-kicker">TWO PHONES · SECRET MOVES</span><h2>手機雙人房間</h2><p class="room-intro">兩支手機加入同一房間，各自拿到 Shuffle 任務。只有你能看自己的秘密動作，雙方鎖定後才揭曉結果。</p><div class="room-lobby-grid"><article class="room-lobby-card"><h3>開一個新房間</h3><p>建立後，把 6 碼代號交給對方。</p><button class="primary" id="roomCreate">建立房間</button></article><article class="room-lobby-card"><h3>加入對方的房間</h3><p>在另一支手機輸入同一個代號。</p><div class="room-join-line"><label class="sr-only" for="roomCodeInput">6 碼房間代號</label><input class="room-code-input" id="roomCodeInput" type="text" maxlength="6" placeholder="ABC234" autocomplete="off" spellcheck="false" aria-label="6 碼房間代號"><button class="primary" id="roomJoin">加入房間</button></div></article></div></div>
+    <div id="roomMatch" hidden><div class="room-top"><div><span class="battle-kicker">SHUFFLE · 你的私人畫面</span><h2 id="roomRound">第 1 / 5 回合</h2></div><span class="room-code-chip">房間 <b id="roomDisplayCode"></b></span><div class="room-score" aria-label="雙方累積比分"><span>你 <b id="roomYourScore">0</b></span><span>:</span><span>對方 <b id="roomOtherScore">0</b></span></div></div><div class="room-personal"><span class="room-role" id="roomRole"></span><h3 id="roomGoalType"></h3><p id="roomGoalSide"></p><p class="room-role" id="roomBudget"></p><p id="roomOwnShares"></p></div><p class="room-status" id="roomStatus" role="status" aria-live="polite"></p><div class="room-share" id="roomShare"><button class="secondary" id="roomCopy">複製房間代號</button><p>對方在「雙人房間」輸入代號即可加入。</p></div><div class="room-results" id="roomResults" hidden></div><div class="room-action-bar"><button class="primary" id="roomPrepare" hidden>準備下一回合</button><button class="primary" id="roomNew" hidden>Shuffle · 開新房間</button><button class="secondary" id="roomSync">重新同步</button><button class="reset" id="roomLeave">離開房間</button></div></div>
+    <p class="room-error" id="roomError" role="alert" hidden></p>
+    <details class="room-rules"><summary>雙人房間規則</summary><p>各有 12 點，第 1 回合設計自己的能帶、不計分；第 2～5 回合可修改自身、干擾對方或保留點數。自身每移動 0.02 eV 花 1 點，干擾花 2 點；設計最多 0.08 eV，攻防最多 0.04 eV，位差限制 ±0.16 eV。</p><p>Shuffle 派發指定位置的 Type I／Type II 任務。Type 與目標位置達標得 1 分，兩種載子比例都達 90% 再加 1 分。雙方同 Type 時，先確認 Type 符合，再以各自目標中電子、電洞比例較低的一項比較，較高者得分；相同則不加分。</p><p>每支手機只收到自己的任務、動作與已揭曉結果。雙方都鎖定才更新能帶；下一回合也需要雙方按「準備」。房間保留兩小時，同一分頁重新整理可回到原座位。</p></details>
+  </section>
+  <section class="panel battle-panel" id="battlePanel" aria-label="與電腦進行能帶攻防" hidden>
+    <div class="battle-heading"><div><span class="battle-kicker">SHUFFLE DUEL · 共用一張能帶圖</span><h2>隨機任務，秘密出招</h2></div><span class="battle-round" id="battleRound">第 1 / 5 回合</span></div>
+    <p class="battle-intro">第一回合各自設計一條能帶；之後選擇修改自身或干擾對方。雙方鎖定後同時揭曉，下一回合再根據公開狀態決策。</p>
+    <div class="battle-settings"><span>Shuffle：Type 與收集位置由開局隨機派發</span><button class="secondary" id="battleStart">Shuffle · 再開一局</button></div>
+    <div class="battle-missions"><article class="battle-mission you" id="battlePlayerCard"><header><span id="battlePlayerRole">你 · 導帶</span><b id="battlePlayerScore">0 分</b></header><h3 id="battlePlayerGoal">Type I · 同側聚集</h3><p id="battlePlayerTarget"></p><div class="battle-progress"><span id="battlePlayerShares">等待揭曉</span><strong id="battlePlayerQuality"></strong></div><div class="battle-track"><span id="battlePlayerBar"></span></div><div class="battle-budget"><span id="battlePlayerBudget">剩餘 12 點</span><span id="battlePlayerPoints">尚未計分</span></div></article><article class="battle-mission cpu" id="battleCpuCard"><header><span id="battleCpuRole">電腦 · 價帶</span><b id="battleCpuScore">0 分</b></header><h3 id="battleCpuGoal">Type II · 兩側分離</h3><p id="battleCpuTarget"></p><div class="battle-progress"><span id="battleCpuShares">等待揭曉</span><strong id="battleCpuQuality"></strong></div><div class="battle-track"><span id="battleCpuBar"></span></div><div class="battle-budget"><span id="battleCpuBudget">剩餘 12 點</span><span id="battleCpuPoints">尚未計分</span></div></article></div>
+    <p class="battle-visibility" id="battleVisibility">雙方當回合的新動作保持隱藏。</p>
+    <details><summary>怎麼玩？計分與秘密出招規則</summary><p>共 5 回合。第 1 回合是秘密設計，不計分；第 2～5 回合揭曉後計分，最後比較累積分數，相同則平手。</p><p><b>不同 Type：</b>符合自己的 Type 得 1 分，電子與電洞在目標側都至少達 90%，再加 1 分。<b>相同 Type：</b>先確認排列符合共同的 Type，再比較雙方的目標比例；每人取「電子比例、電洞比例」較低的一項，較高者得 1 分，達 90% 再加 1 分。完全相同則雙方不加分；Type 不符也不加分。例如電子 95%、電洞 75%，比較值就是 75%。</p><p>導帶看電子，價帶看電洞。Shuffle 從四個目標隨機派發：Type I 聚在 A／B，或 Type II 電子在 A、電洞在 B／方向相反。雙方收到不同的收集目標，可以是相同或不同 Type。</p><p>每人共 12 點。1 點可調整自身位差 0.02 eV；干擾對方每 0.02 eV 要花 2 點。第一回合可設計 0.02～0.08 eV，之後每次最多改動 0.04 eV，也能選擇保留點數。位差限制為 ±0.16 eV；同一能帶上的動作同時相加，相消仍各自扣點。</p><p>電腦在你選擇前，根據上一回合公開能帶、雙方點數和可能動作鎖定計畫；不讀取你的秘密選項。公開上一回合的能帶與比例，隱藏當回合的新動作。自己的滑桿會顯示秘密計畫與試算；鎖定後才更新公開結果。</p><p>點數是遊戲規則，不代表實際功耗。這是室溫理想能帶模型；調整代表假想材料組合，非實際材料即時改變能帶。</p></details>
+  </section>
+  <section class="workspace" aria-label="能帶與位差控制">
+    <div class="panel">
+      <div class="panel-head"><h2>介面兩側的能帶</h2><span class="micro">能量 E 隨位置 x 的變化</span></div>
+      <div class="presets" role="group" aria-label="選擇能帶排列範例">
+        <button class="preset" data-preset="together-b" aria-pressed="true">同側聚集 · B</button>
+        <button class="preset" data-preset="separate" aria-pressed="false">兩側分離</button>
+        <button class="preset" data-preset="together-a" aria-pressed="false">同側聚集 · A</button>
+        <button class="preset" data-preset="flat" aria-pressed="false">沒有位差</button>
+      </div>
+      <div class="graph-wrap"><svg id="bandDiagram" role="img" aria-labelledby="bandTitle bandDesc"><title id="bandTitle">半導體異質接面的能帶圖</title><desc id="bandDesc">材料 A 在左，材料 B 在右，導帶以藍線表示，價帶以橘線表示。</desc></svg></div>
+      <div class="legend"><span><i class="dot"></i>電子 · 導帶底 E<sub>C</sub></span><span><i class="dot hole"></i>電洞 · 價帶頂 E<sub>V</sub></span></div>
+      <p class="battle-public-note" id="battlePublicNote" hidden>主圖只顯示上一回合已揭曉的能帶。</p>
+    </div>
+    <aside class="panel control-panel">
+      <h2 id="controlHeading">調整能帶位差</h2>
+      <div class="battle-controls" id="battleControls" hidden>
+        <span class="secret-status" id="battleSecretStatus">電腦已鎖定秘密動作</span>
+        <div id="battlePlanForm">
+          <fieldset id="battleActionField"><legend>這回合做什麼？</legend><label class="choice-radio"><input type="radio" name="battleAction" value="own" checked>修改自身能帶</label><label class="choice-radio"><input type="radio" name="battleAction" value="attack">干擾對方能帶</label><label class="choice-radio"><input type="radio" name="battleAction" value="hold">保留點數 · 不移動</label></fieldset>
+          <div class="control battle-offset" id="battleOffsetControl">
+            <p class="battle-edit-label" id="battleEditLabel">設計你的導帶</p>
+            <div class="control-title"><label for="battleOffset" id="battleOffsetLabel">導帶位差 ΔE<sub>C</sub></label><output class="value" id="battleOffsetValue" for="battleOffset">−0.06 <small>eV</small></output></div>
+            <p class="formula-def" id="battleOffsetFormula">ΔE<sub>C</sub> = E<sub>C,B</sub> − E<sub>C,A</sub></p>
+            <div class="slider-line"><button class="nudge battle-nudge" id="battleMinus" aria-label="秘密計畫位差減少 0.02 eV">−</button><input id="battleOffset" type="range" min="-4" max="4" step="1" value="-3" aria-describedby="battleOffsetBaseline battleDirectionHelp"><button class="nudge battle-nudge" id="battlePlus" aria-label="秘密計畫位差增加 0.02 eV">+</button></div>
+            <div class="range-labels"><span id="battleOffsetMin">−0.08</span><span id="battleOffsetMid">0</span><span id="battleOffsetMax">+0.08 eV</span></div>
+            <p class="battle-baseline" id="battleOffsetBaseline"></p>
+          </div>
+          <p class="battle-cost" id="battleCost"></p><p class="battle-help" id="battleDirectionHelp"></p><div class="battle-preview" id="battlePreview"></div>
+          <button class="primary" id="battleCommit">鎖定設計並揭曉</button>
+        </div>
+        <button class="primary" id="battleNext" hidden>準備下一回合</button><button class="primary" id="battleReplay" hidden>Shuffle · 再開一局</button><button class="secondary" id="battleTip">分析公開能帶</button><p class="battle-help" id="battleTipText" hidden></p><button class="reset" id="battleReset">重新抽任務並開新局</button>
+        <p class="battle-help">未揭曉的計畫不會改變主圖。鎖定後雙方動作一起生效。</p>
+      </div>
+      <div class="battle-controls" id="roomControls" hidden>
+        <span class="secret-status">你的動作只在這支手機顯示</span><div class="room-waiting" id="roomWaiting" hidden></div>
+        <div id="roomPlanForm"><fieldset id="roomActionField"><legend>這回合做什麼？</legend><label class="choice-radio"><input type="radio" name="roomAction" value="own" checked>修改自身能帶</label><label class="choice-radio"><input type="radio" name="roomAction" value="attack">干擾對方能帶</label><label class="choice-radio"><input type="radio" name="roomAction" value="hold">保留點數 · 不移動</label></fieldset>
+          <div class="control battle-offset" id="roomOffsetControl"><p class="battle-edit-label" id="roomEditLabel"></p><div class="control-title"><label for="roomOffset" id="roomOffsetLabel">秘密位差</label><output class="value" id="roomOffsetValue" for="roomOffset"></output></div><p class="formula-def" id="roomOffsetFormula"></p><div class="slider-line"><button class="nudge" id="roomMinus" aria-label="房間秘密位差減少 0.02 eV">−</button><input id="roomOffset" type="range" min="-4" max="4" step="1" value="3" aria-describedby="roomBaseline roomDirection"><button class="nudge" id="roomPlus" aria-label="房間秘密位差增加 0.02 eV">+</button></div><div class="range-labels"><span id="roomOffsetMin"></span><span id="roomOffsetMid"></span><span id="roomOffsetMax"></span></div><p class="battle-baseline" id="roomBaseline"></p></div>
+          <p class="battle-cost" id="roomCost"></p><p class="battle-help" id="roomDirection"></p><div class="battle-preview" id="roomPreview"></div><button class="primary" id="roomCommit">鎖定我的秘密動作</button>
+        </div>
+      </div>
+      <div class="controls-grid">
+        <div class="control">
+          <div class="control-title"><label for="ecSlider">導帶位差 ΔE<sub>C</sub></label><output id="ecValue" class="value" for="ecSlider">−0.12 <small>eV</small></output></div>
+          <p class="formula-def">ΔE<sub>C</sub> = E<sub>C,B</sub> − E<sub>C,A</sub></p>
+          <div class="slider-line"><button class="nudge" data-control="ec" data-step="-1" aria-label="導帶位差減少 0.01 eV">−</button><input id="ecSlider" type="range" min="-0.5" max="0.5" step="0.01" value="-0.12" aria-describedby="ecDirection"><button class="nudge" data-control="ec" data-step="1" aria-label="導帶位差增加 0.01 eV">+</button></div>
+          <div class="range-labels"><span>−0.50</span><span>0</span><span>+0.50 eV</span></div><p class="direction" id="ecDirection">B 的導帶較低，電子偏向 B。</p>
+        </div>
+        <div class="control holes">
+          <div class="control-title"><label for="evSlider">價帶位差 ΔE<sub>V</sub></label><output id="evValue" class="value" for="evSlider">+0.10 <small>eV</small></output></div>
+          <p class="formula-def">ΔE<sub>V</sub> = E<sub>V,B</sub> − E<sub>V,A</sub></p>
+          <div class="slider-line"><button class="nudge" data-control="ev" data-step="-1" aria-label="價帶位差減少 0.01 eV">−</button><input id="evSlider" type="range" min="-0.5" max="0.5" step="0.01" value="0.10" aria-describedby="evDirection"><button class="nudge" data-control="ev" data-step="1" aria-label="價帶位差增加 0.01 eV">+</button></div>
+          <div class="range-labels"><span>−0.50</span><span>0</span><span>+0.50 eV</span></div><p class="direction" id="evDirection">B 的價帶較高，電洞偏向 B。</p>
+        </div>
+      </div>
+      <div class="result" role="status" aria-live="polite"><div class="result-top"><span id="typeLabel" class="type-label">Type I</span><strong id="resultTitle">電子、電洞都偏向 B</strong></div><p id="resultDescription">B 的導帶較低、價帶較高，兩種載子偏向同一側。</p></div>
+      <button class="reset" id="reset">回到初始範例</button>
+    </aside>
+  </section>
+  <div class="battle-feedback" id="battleFeedback" role="status" aria-live="polite" hidden></div>
+  <details class="battle-history" id="battleHistory" hidden open><summary>已揭曉的攻防紀錄</summary><div class="history-scroll"><table><thead><tr><th>回合</th><th>你的動作</th><th>電腦的動作</th><th>揭曉能帶</th><th>本回合得分</th></tr></thead><tbody id="battleHistoryBody"></tbody></table></div></details>
+  <details class="battle-history room-history" id="roomHistory" hidden><summary>我的動作與已揭曉結果</summary><div class="history-scroll"><table><thead><tr><th>回合</th><th>我的動作</th><th>共同結果</th><th>得分</th></tr></thead><tbody id="roomHistoryBody"></tbody></table></div></details>
+  <section class="panel distribution" aria-label="電子與電洞分布">
+    <div class="panel-head"><h2>載子分布</h2><span class="micro">各類載子在 A、B 兩側的相對比例</span></div>
+    <div class="dist-grid">
+      <div class="dist-card electrons"><div class="dist-title"><span><i class="dot"></i>電子</span><span class="carrier-target" id="electronTarget">偏向材料 B</span></div><div class="share-track" aria-hidden="true"><div class="share-a" id="electronBarA"></div><div class="share-b" id="electronBarB"></div></div><div class="share-values"><span>材料 A <b id="electronA">1.0%</b></span><span>材料 B <b id="electronB">99.0%</b></span></div><svg id="electronDensity" class="density" role="img" aria-label="電子的相對濃度隨位置變化"></svg></div>
+      <div class="dist-card holes-share"><div class="dist-title"><span><i class="dot hole"></i>電洞</span><span class="carrier-target" id="holeTarget">偏向材料 B</span></div><div class="share-track" aria-hidden="true"><div class="share-a" id="holeBarA"></div><div class="share-b" id="holeBarB"></div></div><div class="share-values"><span>材料 A <b id="holeA">2.0%</b></span><span>材料 B <b id="holeB">98.0%</b></span></div><svg id="holeDensity" class="density" role="img" aria-label="電洞的相對濃度隨位置變化"></svg></div>
+    </div>
+    <p class="dist-caption">位差越大，相較於室溫的熱能，載子通常越偏向有利的一側。圖中的圓點示意分布，精確比例請看數字。</p>
+    <div class="impact"><div><h3 id="impactTitle">這個 Type I 排列有什麼影響？</h3><p id="impactDescription">電子與電洞偏向同一側，有利於它們相遇與復合；若材料適合發光，可用來設計發光區。</p></div><div class="thermal"><span>導帶台階：<b id="ecThermal">4.64 k<sub>B</sub>T</b></span><span>價帶台階：<b id="evThermal">3.87 k<sub>B</sub>T</b></span><span class="weak" id="thermalNote">室溫熱能 k<sub>B</sub>T ≈ 0.0259 eV。</span></div></div>
+  </section>
+  <section class="comparison" aria-label="Type I 與 Type II 的差別與影響">
+    <div class="comparison-head"><h2>Type I 和 Type II 差在哪裡？</h2><p>看最低導帶與最高價帶，是否落在同一個材料。</p></div>
+    <div class="type-grid">
+      <article class="type-card current" data-type="Type I"><div class="type-header"><div><h3>Type I</h3><p class="type-sub">包覆型 · Straddling alignment</p></div><span class="current-tag">目前的排列</span></div>
+        <svg class="mini-band" role="img" aria-label="Type I 範例：B 的導帶較低、價帶較高，電子與電洞均偏向 B"></svg>
+        <dl><div><dt>能帶怎麼排？</dt><dd>一種材料的能隙，被另一種材料的能隙包住。圖中 B 的<strong>導帶較低、價帶較高</strong>；以 B − A 定義位差時，兩個位差的<strong>符號相反</strong>。</dd></div><div><dt>載子在哪裡？</dt><dd>電子找低導帶、電洞找高價帶，因此都偏向能隙較小的材料；也能把排列反轉，讓兩者都偏向 A。</dd></div><div><dt>有什麼影響與用途？</dt><dd>有利於電子與電洞的空間重疊，增加相遇、復合的機會。<strong>復合</strong>是導帶電子填回價帶空位的過程；在適合的材料中，能量可化為光。常見於 <strong>LED、半導體雷射的載子侷限結構</strong>。</dd></div></dl>
+        <p class="type-caution">Type I 有利於載子聚在一起；實際發光效率仍取決於直接／間接能隙、缺陷和注入條件。完整侷限結構通常需要兩側的障壁。</p><div class="type-actions"><button class="secondary" data-example="together-b">在主圖看 Type I</button><button class="secondary" data-example="together-a">改成聚在 A</button></div>
+      </article>
+      <article class="type-card" data-type="Type II"><div class="type-header"><div><h3>Type II</h3><p class="type-sub">交錯型 · Staggered alignment</p></div><span class="current-tag">目前的排列</span></div>
+        <svg class="mini-band" role="img" aria-label="Type II 範例：B 的導帶較低，A 的價帶較高，電子在 B，電洞在 A"></svg>
+        <dl><div><dt>能帶怎麼排？</dt><dd>兩種材料的能隙交錯。圖中 B 的<strong>導帶和價帶都較低</strong>；以 B − A 定義位差時，兩個位差的<strong>符號相同</strong>。</dd></div><div><dt>載子在哪裡？</dt><dd>最低導帶在 B，最高價帶在 A，所以電子與電洞偏向介面的不同側。兩個位差都反轉，就交換它們偏向的材料。</dd></div><div><dt>有什麼影響與用途？</dt><dd>空間分離通常會減少電子與電洞的重疊、延緩部分復合過程，有利於把光生載子分開收集。可用於<strong>光偵測、光伏與電荷轉移結構</strong>；也能形成跨介面的電子－電洞對。</dd></div></dl>
+        <p class="type-caution">Type II 仍可能發生跨介面復合與發光。分離也不保證高效率：界面缺陷、載子傳輸和電極收集能力都會影響結果。</p><div class="type-actions"><button class="secondary" data-example="separate">在主圖看 Type II</button><button class="secondary" data-example="reverse">交換電子與電洞</button></div>
+      </article>
+    </div>
+    <p class="term-note">分類告訴你「偏向同側或不同側」；位差的大小決定偏好有多強。例如 0.01 eV 小於室溫熱能，雖然仍能分類為 Type I 或 Type II，載子可能只有約六成在有利的一側。</p>
+    <div class="panel quick-experiments"><div><h3>再試一個小實驗</h3><p>把兩個位差縮到 0.01 eV，觀察分類與分布的差別。</p></div><div class="type-actions"><button class="secondary" data-experiment="weak">弱位差 Type II</button><button class="secondary" data-experiment="strong">強位差 Type II</button></div></div>
+  </section>
+  <section class="explanation" aria-label="閱讀能帶圖的方法">
+    <div class="note"><h3>怎麼讀這張圖？</h3><p>橫軸是位置，左邊是材料 A、右邊是材料 B；縱軸往上代表能量越高。藍線是<strong>導帶底</strong>，橘線是<strong>價帶頂</strong>，兩條線之間是能隙。介面上的高度差，就是能帶位差。</p></div>
+    <div class="note"><h3>為什麼電洞往較高的價帶？</h3><p>這張圖畫的是<strong>電子的能量</strong>。電洞是價帶中缺少電子的空位，它的能量趨勢和價帶電子相反，因此電洞偏向價帶頂較高的一側。</p></div>
+  </section>
+  <details id="modelDetails"><summary>查看模型假設與分布公式</summary><div class="model-body"><p>這是用來理解位差的理想模型：溫度固定為 300 K，兩側體積相同，有效態密度相同，載子稀少且服從波茲曼近似。對每一類載子，兩側具有相同的（準）費米能階，因此可以比較介面兩側的相對濃度。</p><div class="equations"><span>n<sub>B</sub> / n<sub>A</sub> = exp(−ΔE<sub>C</sub> / k<sub>B</sub>T)</span><span>p<sub>B</sub> / p<sub>A</sub> = exp(+ΔE<sub>V</sub> / k<sub>B</sub>T)</span></div><p>室溫下 k<sub>B</sub>T ≈ 0.0259 eV。材料 A 的參考能隙固定為 1.60 eV；材料 B 的能隙為 1.60 + ΔE<sub>C</sub> − ΔE<sub>V</sub>（eV）。導帶與價帶位差可分別調整，代表探索不同的假想材料組合。</p><p>比例分別以電子總量、電洞總量歸一化；它們不代表絕對濃度或兩種載子的總量相等。這裡省略能帶彎曲、摻雜、界面電荷、自洽電場和量子效應；單一介面呈現載子對一側的偏好，完整量子井還需要另一側的障壁。滑桿範圍涵蓋 Type I 與 Type II，不包含破裂能隙的 Type III。</p><p>對戰的比例來自理想模型，不代表實際元件效率。點數只是遊戲限制。電腦對戰重新整理就會重設；雙人房間在同一瀏覽分頁可重新連線，房間兩小時後到期。下載版可自由探索與對戰電腦，雙人房間需開啟線上網站。</p><p>研究範例：<a href="https://pubs.acs.org/doi/10.1021/acsphotonics.3c00517" target="_blank" rel="noopener">Type II 介面中空間分離與較慢的復合</a>；<a href="https://arxiv.org/abs/1903.03002" target="_blank" rel="noopener">Type II 光伏元件的電荷轉移與收集限制</a>。</p><p>延伸閱讀：<a href="https://ocw.mit.edu/courses/6-772-compound-semiconductor-devices-spring-2003/pages/lecture-notes/" target="_blank" rel="noopener">MIT OpenCourseWare · Heterostructures</a>；<a href="https://www.ioffe.ru/SVA/NSM/Semicond/Si/bandstr.html" target="_blank" rel="noopener">Ioffe Institute · 載子濃度與能帶</a>。</p></div></details>
+  <footer class="footer"><span>理想能帶示意 · 非特定材料的實驗數據</span><a href="/" download="heterojunction-interactive.html">下載單檔教材</a></footer>
+</main>
+<script>
+'use strict';
+const KBT=8.617333262e-5*300;
+const PRESETS={'together-b':[-0.12,0.10],separate:[-0.12,-0.10],'together-a':[0.12,-0.10],flat:[0,0],reverse:[0.12,0.10]};
+const state={ec:-0.12,ev:0.10};
+const $=id=>document.getElementById(id);
+const pct=x=>x<0.0005?'＜0.1%':x>0.9995?'＞99.9%':(x*100).toFixed(1)+'%';
+const signed=x=>(x<0?'−':x>0?'+':'')+Math.abs(x).toFixed(2);
+function calculate(ec,ev){
+  const electronB=1/(1+Math.exp(ec/KBT)),holeB=1/(1+Math.exp(-ev/KBT));
+  const eSide=ec===0?'equal':ec<0?'B':'A',hSide=ev===0?'equal':ev>0?'B':'A';
+  let type,title,description;
+  if(eSide==='equal'&&hSide==='equal'){type='零位差';title='兩側沒有能帶偏好';description='兩條能帶都對齊。在此理想模型中，電子與電洞各有一半在 A、一半在 B。';}
+  else if(eSide==='equal'||hSide==='equal'){type='邊界排列';title=eSide==='equal'?'只有電洞偏向 '+hSide:'只有電子偏向 '+eSide;description=eSide==='equal'?'導帶沒有位差，電子平均分布；價帶位差決定電洞偏向哪一側。':'價帶沒有位差，電洞平均分布；導帶位差決定電子偏向哪一側。';}
+  else if(eSide===hSide){type='Type I';title='電子、電洞都偏向 '+eSide;description=eSide+' 的導帶較低、價帶較高，兩種載子偏向同一側。';}
+  else{type='Type II';title='電子偏向 '+eSide+'，電洞偏向 '+hSide;description='電子偏向 '+eSide+' 的低導帶；電洞偏向 '+hSide+' 的高價帶，兩種載子在空間上分離。';}
+  return {ec,ev,electronB,holeB,eSide,hSide,type,title,description,gapB:1.6+ec-ev};
+}
+function renderImpact(r){
+  document.querySelectorAll('.type-card').forEach(card=>card.classList.toggle('current',card.dataset.type===r.type));
+  $('impactTitle').textContent=r.type==='Type I'||r.type==='Type II'?'這個 '+r.type+' 排列有什麼影響？':'目前的排列有什麼影響？';
+  $('impactDescription').textContent=r.type==='Type I'?'電子與電洞偏向 '+r.eSide+'，有利於空間重疊與相遇。若材料適合發光，可利用這種排列設計發光區；實際發光效率仍受材料與缺陷影響。':r.type==='Type II'?'電子偏向 '+r.eSide+'、電洞偏向 '+r.hSide+'，有利於空間分離並通常減少重疊，可幫助分開收集光生載子。界面復合與傳輸損失仍可能發生。':r.type==='零位差'?'兩條能帶都對齊。這個模型中，位差沒有把載子導向特定一側，兩側各有 50%。':'其中一條能帶對齊，只有另一類載子具有能帶偏好。不能單靠這個排列就推論兩種載子都被有效分離或聚集。';
+  $('ecThermal').innerHTML=(Math.abs(r.ec)/KBT).toFixed(2)+' k<sub>B</sub>T';$('evThermal').innerHTML=(Math.abs(r.ev)/KBT).toFixed(2)+' k<sub>B</sub>T';
+  $('thermalNote').textContent=Math.min(Math.abs(r.ec),Math.abs(r.ev))<KBT?'至少一個台階小於室溫熱能，仍有明顯比例的載子留在另一側。':'室溫熱能 kBT ≈ 0.0259 eV。台階越大，兩側比例差異通常越明顯。';
+}
+function requireEmptyInput(input){if(!input||typeof input!=='object'||Array.isArray(input)||Object.keys(input).length)throw Error('此操作不接受額外參數。');}
+function selectMode(mode){if(!['explore','battle','room'].includes(mode))throw Error('未知模式。');if(mode==='battle')return enterBattle();leaveBattle();if(mode==='room')return enterRoom();room.active=false;stopRoomPolling();update();return {mode:'explore'};}
+function renderMode(){const active=battle.active||room.active;document.querySelector('main').classList.toggle('game-active',active);$('exploreMode').setAttribute('aria-pressed',String(!active));$('roomMode').setAttribute('aria-pressed',String(room.active));document.querySelector('.presets').hidden=active;$('modeNote').textContent='先試範例，再用滑桿探索。';$('reset').textContent='回到初始範例';document.querySelectorAll('[data-example],[data-experiment]').forEach(b=>b.disabled=active);}
+/* DUEL BEGIN */
+const DUEL_TARGETS=[
+  {id:'I-A',type:'Type I',eSide:'A',hSide:'A'},
+  {id:'I-B',type:'Type I',eSide:'B',hSide:'B'},
+  {id:'II-AB',type:'Type II',eSide:'A',hSide:'B'},
+  {id:'II-BA',type:'Type II',eSide:'B',hSide:'A'}
+];
+function shuffleGoals(random=Math.random){
+  const first=Math.min(3,Math.max(0,Math.floor(random()*4))),rest=DUEL_TARGETS.filter((_,i)=>i!==first);
+  return {player:{...DUEL_TARGETS[first]},cpu:{...rest[Math.min(2,Math.max(0,Math.floor(random()*3)))]}};
+}
+const otherBand=field=>field==='ec'?'ev':'ec';
+const bandName=field=>field==='ec'?'導帶':'價帶';
+function makeDuel(controlled='ec',goals=shuffleGoals()){
+  if(!['ec','ev'].includes(controlled))throw Error('請選擇有效的能帶。');
+  for(const actor of ['player','cpu'])if(!DUEL_TARGETS.some(q=>q.id===goals?.[actor]?.id&&q.type===goals[actor].type&&q.eSide===goals[actor].eSide&&q.hSide===goals[actor].hSide))throw Error('任務無效。');
+  if(goals.player.id===goals.cpu.id)throw Error('雙方需要不同的收集目標。');
+  return {started:false,active:false,controlled,mission:'shuffle',goals:structuredClone(goals),round:1,stage:'setup',board:{ec:0,ev:0},playerBudget:12,cpuBudget:12,playerScore:0,cpuScore:0,history:[],cpuPlan:null,plan:{kind:'own',direction:controlled==='ec'?-1:1,amount:3},tip:false};
+}
+function carrierModel(ec,ev){
+  const thermal=8.617333262e-5*300,electronB=1/(1+Math.exp(ec/thermal)),holeB=1/(1+Math.exp(-ev/thermal));
+  const eSide=ec===0?'equal':ec<0?'B':'A',hSide=ev===0?'equal':ev>0?'B':'A';
+  return {electronB,holeB,eSide,hSide,type:eSide==='equal'&&hSide==='equal'?'零位差':eSide==='equal'||hSide==='equal'?'邊界排列':eSide===hSide?'Type I':'Type II'};
+}
+function goalFor(q,board){
+  const r=carrierModel(board.ec*.02,board.ev*.02),eShare=q.eSide==='B'?r.electronB:1-r.electronB,hShare=q.hSide==='B'?r.holeB:1-r.holeB,quality=Math.min(eShare,hShare),aligned=r.type===q.type&&r.eSide===q.eSide&&r.hSide===q.hSide;
+  return {...q,eShare,hShare,quality,typeMatches:r.type===q.type,aligned,strong:aligned&&quality>=.9,points:aligned?(quality>=.9?2:1):0};
+}
+function duelGoal(g,actor,board=g.board){return goalFor(g.goals[actor],board);}
+function duelOutcome(g,board=g.board){
+  const player=duelGoal(g,'player',board),cpu=duelGoal(g,'cpu',board),sameType=player.type===cpu.type;
+  let playerGain=player.points,cpuGain=cpu.points,reason='type';
+  if(sameType){playerGain=cpuGain=0;if(!player.typeMatches)reason='unmatched';else if(Math.abs(player.quality-cpu.quality)<1e-9)reason='tie';else{reason='ratio';if(player.quality>cpu.quality)playerGain=player.quality>=.9?2:1;else cpuGain=cpu.quality>=.9?2:1;}}
+  return {player,cpu,sameType,playerGain,cpuGain,reason};
+}
+function normalizeDuelAction(a){
+  if(!a||typeof a!=='object'||Array.isArray(a)||Object.keys(a).some(k=>!['kind','direction','amount'].includes(k))||!['own','attack','hold'].includes(a.kind)||![1,-1].includes(a.direction)||!Number.isInteger(a.amount)||a.amount<0||a.amount>4||(a.kind!=='hold'&&a.amount===0))throw Error('動作、方向或幅度無效。');
+  return a.kind==='hold'?{kind:'hold',direction:1,amount:0}:{kind:a.kind,direction:a.direction,amount:a.amount};
+}
+function duelActionInfo(g,actor,input){
+  const a=normalizeDuelAction(input),own=actor==='player'?g.controlled:otherBand(g.controlled),field=a.kind==='attack'?otherBand(own):own,cost=a.kind==='hold'?0:a.amount*(a.kind==='attack'?2:1),budget=actor==='player'?g.playerBudget:g.cpuBudget;
+  if(g.round===1&&a.kind!=='own')throw Error('第一回合只能設計自身能帶。');
+  if(g.round>1&&a.amount>2)throw Error('每次最多改動 0.04 eV。');
+  if(cost>budget)throw Error('剩餘點數不足，請縮小幅度或保留點數。');
+  const delta=a.direction*a.amount;
+  if(a.kind!=='hold'&&Math.abs(g.board[field]+delta)>8)throw Error('這個動作會超出 ±0.16 eV 範圍。');
+  return {...a,field,cost,delta};
+}
+function duelActions(g,actor){
+  const actions=[];
+  for(const kind of g.round===1?['own']:['own','attack'])for(const direction of [-1,1])for(let amount=1;amount<=(g.round===1?4:2);amount++){const a={kind,direction,amount};try{duelActionInfo(g,actor,a);actions.push(a);}catch{}}
+  if(g.round>1)actions.push({kind:'hold',direction:1,amount:0});return actions;
+}
+function battleSliderBounds(g,kind=g.plan.kind){
+  const field=kind==='attack'?otherBand(g.controlled):g.controlled,baseline=g.board[field],limit=kind==='hold'?0:Math.min(g.round===1?4:2,Math.floor(g.playerBudget/(kind==='attack'?2:1)));
+  return {field,baseline,min:Math.max(-8,baseline-limit),max:Math.min(8,baseline+limit)};
+}
+function combinedDuelBoard(g,p,c){
+  const board={...g.board};for(const a of [p,c])board[a.field]+=a.delta;
+  for(const f of ['ec','ev'])board[f]=Math.max(-8,Math.min(8,board[f]));return board;
+}
+function resolveDuel(g,playerInput,cpuInput){
+  if(!g.active||!g.started||g.stage!=='plan')throw Error('目前不能提交對戰動作。');
+  const p=duelActionInfo(g,'player',playerInput),c=duelActionInfo(g,'cpu',cpuInput),board=combinedDuelBoard(g,p,c),outcome=duelOutcome(g,board),playerGain=g.round===1?0:outcome.playerGain,cpuGain=g.round===1?0:outcome.cpuGain;
+  const entry={round:g.round,player:p,cpu:c,board:{...board},type:carrierModel(board.ec*.02,board.ev*.02).type,playerGain,cpuGain,playerQuality:outcome.player.quality,cpuQuality:outcome.cpu.quality,reason:g.round===1?'design':outcome.reason};
+  return {...g,board,playerBudget:g.playerBudget-p.cost,cpuBudget:g.cpuBudget-c.cost,playerScore:g.playerScore+playerGain,cpuScore:g.cpuScore+cpuGain,stage:g.round===5?'finished':'revealed',cpuPlan:null,history:[...g.history,entry],tip:false};
+}
+function chooseCpuPlan(g,random=Math.random){
+  if(g.round===1){const q=g.goals.cpu,field=otherBand(g.controlled);return {kind:'own',direction:field==='ec'?(q.eSide==='B'?-1:1):(q.hSide==='B'?1:-1),amount:random()<.5?2:3};}
+  const possible=duelActions(g,'player'),ranked=duelActions(g,'cpu').map(a=>{const c=duelActionInfo(g,'cpu',a),values=possible.map(x=>{const p=duelActionInfo(g,'player',x),r=duelOutcome(g,combinedDuelBoard(g,p,c));return 4*(r.cpuGain-r.playerGain)+3*(r.cpu.quality-r.player.quality);});return {a,value:Math.min(...values)*.65+values.reduce((s,v)=>s+v,0)/values.length*.35-c.cost*.10};}).sort((a,b)=>b.value-a.value);
+  const close=ranked.filter(x=>x.value>=ranked[0].value-.12);return {...close[Math.min(close.length-1,Math.floor(random()*close.length))].a};
+}
+
+const battle=makeDuel();
+let beforeBattle=[state.ec,state.ev];
+function setBattleSlider(value){
+  if(!battle.active||battle.stage!=='plan')return;
+  const bounds=battleSliderBounds(battle),target=Math.max(bounds.min,Math.min(bounds.max,Math.round(Number(value)))),delta=target-bounds.baseline;
+  battle.plan={kind:battle.plan.kind,direction:delta<0?-1:1,amount:Math.abs(delta)};update();
+}
+function changeBattleKind(kind){
+  if(!battle.active||battle.stage!=='plan')return;
+  if(kind==='hold')battle.plan={kind:'hold',direction:1,amount:0};
+  else{const bounds=battleSliderBounds(battle,kind),delta=battle.plan.direction*(battle.plan.amount||1),target=Math.max(bounds.min,Math.min(bounds.max,bounds.baseline+delta));battle.plan={kind,direction:target<bounds.baseline?-1:1,amount:Math.abs(target-bounds.baseline)};}
+  update();
+}
+function duelActionText(a){return a.kind==='hold'?'保留點數（0 點）':(a.kind==='attack'?'干擾':'設計／調整')+bandName(a.field)+' '+signed(a.delta*.02)+' eV（'+a.cost+' 點）';}
+function leaveBattle(){if(battle.active){battle.active=false;state.ec=beforeBattle[0];state.ev=beforeBattle[1];}}
+function syncBattle(){state.ec=Math.round(battle.board.ec*2)/100;state.ev=Math.round(battle.board.ev*2)/100;update();}
+function enterBattle(){if(!battle.active)beforeBattle=[state.ec,state.ev];room.active=false;stopRoomPolling();if(!battle.started)return startBattle();battle.active=true;syncBattle();return readBattle();}
+function prepareBattleRound(){
+  battle.cpuPlan=chooseCpuPlan(battle);
+  const q=duelGoal(battle,'player'),desired=battle.controlled==='ec'?(q.eSide==='B'?-1:1):(q.hSide==='B'?1:-1);
+  const preferred={kind:'own',direction:desired,amount:battle.round===1?3:1},legal=duelActions(battle,'player');
+  battle.plan=legal.find(a=>a.kind===preferred.kind&&a.direction===preferred.direction&&a.amount===preferred.amount)||legal.find(a=>a.kind==='own')||{kind:'hold',direction:1,amount:0};battle.tip=false;
+}
+function startBattle(controlled=Math.random()<.5?'ec':'ev',goals=shuffleGoals()){
+  const fresh=makeDuel(controlled,goals);if(!battle.active)beforeBattle=[state.ec,state.ev];
+  Object.assign(battle,fresh,{started:true,active:true,stage:'plan'});room.active=false;stopRoomPolling();prepareBattleRound();syncBattle();return readBattle();
+}
+function planBattle(input){if(!battle.active||!battle.started||battle.stage!=='plan')throw Error('請先開始一個可出招的回合。');const plan=normalizeDuelAction(input);duelActionInfo(battle,'player',plan);battle.plan=plan;update();return readBattle();}
+function commitBattle(){const next=resolveDuel(battle,battle.plan,battle.cpuPlan);Object.assign(battle,next);syncBattle();return readBattle();}
+function nextBattle(){if(!battle.active||battle.stage!=='revealed')throw Error('請先揭曉目前回合，或開始新對戰。');battle.round++;battle.stage='plan';prepareBattleRound();syncBattle();return readBattle();}
+function readBattle(){
+  return {active:battle.active,started:battle.started,round:battle.round,totalRounds:5,stage:battle.stage,controlledBand:battle.controlled,mission:battle.mission,revealedOffsets_eV:{conduction:battle.board.ec*.02,valence:battle.board.ev*.02},playerBudget:battle.playerBudget,computerBudget:battle.cpuBudget,playerScore:battle.playerScore,computerScore:battle.cpuScore,playerGoal:duelGoal(battle,'player'),computerGoal:duelGoal(battle,'cpu'),yourPlan:{...battle.plan},computerCommitted:battle.stage==='plan',history:battle.history.map(e=>({...e,board:{conduction_eV:e.board.ec*.02,valence_eV:e.board.ev*.02}}))};
+}
+function battleAnalysis(){
+  if(!battle.started||battle.round===1&&battle.stage==='plan')return '第一回合還沒有對手的公開設計。先選擇導向目標載子的方向；較大的台階會消耗更多點數，設計回合不計分。';
+  const q=duelGoal(battle,'player'),weak=q.eShare<=q.hShare?'ec':'ev',own=weak===battle.controlled;
+  return '就已揭曉的圖，你最接近的目標是電子在 '+q.eSide+'、電洞在 '+q.hSide+'。目前較弱的是'+(weak==='ec'?'電子分布':'電洞分布')+'（'+pct(Math.min(q.eShare,q.hShare))+'）；調整'+bandName(weak)+'往有利方向最能補強。'+(own?'這是你的能帶，修改較省點數。':'這是對手的能帶，要透過干擾修改，花費較高。')+' 這個分析不含對手本回合的秘密動作。';
+}
+function renderBattle(){
+  const active=battle.active;$('battlePanel').hidden=!active;$('battleControls').hidden=!active;$('battleHistory').hidden=!active||!battle.history.length;$('battlePublicNote').hidden=!active;$('battleFeedback').hidden=!active;
+  $('battlePanel').classList.toggle('playing',battle.started&&battle.stage!=='finished');$('battleReset').hidden=!battle.started;
+  document.querySelector('main').classList.toggle('battle-active',active);$('battleMode').setAttribute('aria-pressed',String(active));$('controlHeading').textContent=active?'你的秘密動作':'調整能帶位差';
+  $('ecSlider').disabled=active;$('evSlider').disabled=active;document.querySelectorAll('[data-control]').forEach(b=>b.disabled=active);
+  if(!active)return;
+  $('battleStart').textContent='Shuffle · 再開一局';
+  $('battleRound').textContent=!battle.started?'設定任務':battle.stage==='finished'?'結束 · '+(battle.playerScore>battle.cpuScore?'你獲勝':battle.playerScore<battle.cpuScore?'電腦獲勝':'平手'):'第 '+battle.round+' / 5 回合'+(battle.round===1?' · 設計':' · 攻防');
+  const publicOutcome=duelOutcome(battle),planning=battle.started&&battle.stage==='plan';
+  $('battleVisibility').textContent=!battle.history.length?'雙方設計尚未揭曉 · 當回合動作保密':planning?'上方比例是上一回合已揭曉的結果 · 當回合新動作保密':'上方比例是本回合揭曉的結果 · 雙方動作已公開';
+  for(const [actor,prefix] of [['player','battlePlayer'],['cpu','battleCpu']]){
+    const q=battle.goals[actor],r=duelGoal(battle,actor),own=actor==='player'?battle.controlled:otherBand(battle.controlled),budget=actor==='player'?battle.playerBudget:battle.cpuBudget,score=actor==='player'?battle.playerScore:battle.cpuScore;
+    $(prefix+'Role').textContent=(actor==='player'?'你':'電腦')+' · '+bandName(own);$(prefix+'Score').textContent=score+' 分';$(prefix+'Goal').textContent=q.type+' · '+(q.type==='Type I'?'同側聚集':'兩側分離');
+    $(prefix+'Target').textContent=q.eSide?'電子在 '+q.eSide+'、電洞在 '+q.hSide:q.type==='Type I'?'可聚在 A 或 B；電子與電洞需在同一側':'電子與電洞偏向不同側，方向不限';
+    const unrevealed=!battle.history.length,gain=actor==='player'?publicOutcome.playerGain:publicOutcome.cpuGain;
+    $(prefix+'Shares').innerHTML=unrevealed?'設計尚未揭曉':'<span class="battle-share-e">電子 '+r.eSide+' '+pct(r.eShare)+'</span> · <span class="battle-share-h">電洞 '+r.hSide+' '+pct(r.hShare)+'</span>';
+    $(prefix+'Quality').textContent=unrevealed?'':'較低一項 '+pct(r.quality);$(prefix+'Bar').style.width=(unrevealed?0:r.quality*100)+'%';$(prefix+'Budget').textContent='剩餘 '+budget+' / 12 點';
+    const standing=!r.typeMatches?'Type 未達標':publicOutcome.sameType?(publicOutcome.reason==='tie'?'比例相同 · 平手':gain?'比例領先':'比例落後'):r.aligned?'目標達標':'收集位置未達標';
+    $(prefix+'Points').textContent=battle.round===1?'設計回合不計分':standing+(planning?' · 公開狀態':' · 本回合 +'+gain+' 分');
+    $(prefix+'Card').classList.toggle('met',!unrevealed&&gain>0);
+  }
+  $('battlePlanForm').hidden=!planning;$('battleNext').hidden=battle.stage!=='revealed';$('battleReplay').hidden=battle.stage!=='finished';$('battleSecretStatus').textContent=planning?'電腦已鎖定，本回合動作隱藏':battle.started?'雙方動作已揭曉':'先設定任務，再開始對戰';$('battleActionField').hidden=battle.round===1;
+  document.querySelectorAll('input[name=battleAction]').forEach(r=>r.checked=r.value===battle.plan.kind);
+  const bounds=battleSliderBounds(battle),field=bounds.field,target=bounds.baseline+(battle.plan.kind==='hold'?0:battle.plan.direction*battle.plan.amount),sub=field==='ec'?'C':'V';
+  $('battleOffsetControl').hidden=battle.plan.kind==='hold';$('battleOffsetControl').classList.toggle('holes',field==='ev');
+  $('battleEditLabel').textContent=(battle.plan.kind==='attack'?'干擾電腦的':'設計／調整你的')+bandName(field)+' · 私人計畫';
+  $('battleOffsetLabel').innerHTML=bandName(field)+'位差 ΔE<sub>'+sub+'</sub>';$('battleOffsetValue').innerHTML=signed(target*.02)+' <small>eV</small>';
+  $('battleOffsetFormula').innerHTML='ΔE<sub>'+sub+'</sub> = E<sub>'+sub+',B</sub> − E<sub>'+sub+',A</sub>';
+  const slider=$('battleOffset');slider.min=bounds.min;slider.max=bounds.max;slider.value=target;slider.disabled=!planning||bounds.min===bounds.max;
+  slider.setAttribute('aria-valuetext',signed(target*.02)+' eV，移動 '+signed((target-bounds.baseline)*.02)+' eV');
+  $('battleOffsetMin').textContent=signed(bounds.min*.02);$('battleOffsetMid').textContent=signed(bounds.baseline*.02);$('battleOffsetMax').textContent=signed(bounds.max*.02)+' eV';
+  $('battleOffsetBaseline').textContent=(battle.round===1?'起點':'公開位差')+' '+signed(bounds.baseline*.02)+' → 計畫 '+signed(target*.02)+' eV（移動 '+signed((target-bounds.baseline)*.02)+'）';
+  $('battleMinus').disabled=!planning||target<=bounds.min;$('battlePlus').disabled=!planning||target>=bounds.max;
+  let info,error='';try{info=duelActionInfo(battle,'player',battle.plan);}catch(e){error=e.message;}
+  if(battle.plan.kind!=='hold'&&battle.plan.amount===0)error=battle.round===1?'請用滑桿選擇非零位差，完成秘密設計。':'目前沒有移動；請調整滑桿，或選擇「保留點數」。';
+  $('battleCost').textContent=error||'本次花費 '+info.cost+' 點 · 提交後剩餘 '+(battle.playerBudget-info.cost)+' 點';$('battleCost').classList.toggle('over',!!error);$('battleCommit').disabled=!!error||!planning;$('battleCommit').textContent=battle.round===1?'鎖定設計並揭曉':'鎖定動作並揭曉';
+  $('battleDirectionHelp').textContent=battle.plan.kind==='hold'?'保留點數，能帶仍可能被對手的動作改變。':'本次改動'+bandName(field)+'。'+(field==='ec'?'降低 B 的導帶 → 電子偏向 B；提高 → 偏向 A。':'提高 B 的價帶 → 電洞偏向 B；降低 → 偏向 A。');
+  const preview=$('battlePreview');if(error)preview.textContent='主圖仍保留公開狀態；調整滑桿後才能鎖定。';else if(battle.round===1)preview.innerHTML='<b>你的秘密設計</b><br>'+bandName(field)+'計畫位差 '+signed(target*.02)+' eV。對手的能帶尚未揭曉，現在不能判定最終 Type 或完整比例。';else{const board={...battle.board};board[info.field]+=info.delta;const r=calculate(board.ec*.02,board.ev*.02),trial=duelOutcome(battle,board),q=trial.player;preview.innerHTML='<b>私人試算 · 假設對手不移動</b><br>排列：'+r.type+'<br><span class="battle-share-e">電子在 '+q.eSide+' '+pct(q.eShare)+'</span> · <span class="battle-share-h">電洞在 '+q.hSide+' '+pct(q.hShare)+'</span><br>你的比較值 '+pct(q.quality)+(trial.sameType?' ／ 電腦 '+pct(trial.cpu.quality):'')+'<br>預估：你 +'+trial.playerGain+'、電腦 +'+trial.cpuGain+' 分。雙方揭曉後才確定。';}
+  $('battlePublicNote').textContent=!battle.history.length?'初始圖為零位差示意；雙方的秘密設計尚未揭曉。':planning?'主圖是上一回合已揭曉的能帶；你的秘密計畫另列於出招區試算。':'主圖已更新為雙方動作同時生效後的能帶。';
+  let feedback,tone='info';
+  if(!battle.started)feedback='<b>按 Shuffle，隨機派發雙方任務。</b><br>你和電腦各有 12 點；第一回合不計分，之後有四次攻防機會。';
+  else if(planning)feedback='<b>'+(battle.round===1?'秘密設計：只調整自己控制的能帶。':'根據公開能帶，選擇修改、干擾或保留點數。')+'</b><br>電腦已先鎖定動作；你改選方案時，電腦不會重新選招。';
+  else{const h=battle.history.at(-1);feedback='<b>回合 '+h.round+' 揭曉 · '+h.type+'</b><br>你：'+duelActionText(h.player)+'。電腦：'+duelActionText(h.cpu)+'。<br>'+(h.round===1?'設計完成，不計分。現在可以根據公開位差與比例開始攻防。':'本回合你 +'+h.playerGain+' 分、電腦 +'+h.cpuGain+' 分。'+(h.reason==='ratio'?' 同 Type 比較：你 '+pct(h.playerQuality)+'、電腦 '+pct(h.cpuQuality)+'；目標比例較高者得分。':h.reason==='tie'?' 目標比例相同，本回合平手。':h.reason==='unmatched'?' 排列未達共同的 Type，雙方不加分。':Math.max(h.playerGain,h.cpuGain)===1?' Type 達標，兩種載子的目標比例尚未都達 90%。':''));
+    if(battle.stage==='finished'){const won=battle.playerScore>battle.cpuScore,lost=battle.playerScore<battle.cpuScore;tone=won?'success':lost?'error':'info';feedback='<b>最終比分 '+battle.playerScore+' : '+battle.cpuScore+' · '+(won?'你獲勝':lost?'電腦獲勝':'平手')+'</b><br>'+feedback+'<br>回顧下方紀錄，看看資源花在補強或干擾時，如何改變載子分布。';}}
+  $('battleFeedback').innerHTML=feedback;$('battleFeedback').dataset.tone=tone;$('battleTipText').hidden=!battle.tip;$('battleTipText').textContent=battleAnalysis();
+  $('battleHistoryBody').innerHTML=battle.history.map(h=>'<tr><td>'+h.round+(h.round===1?'<small>設計</small>':'')+'</td><td>'+duelActionText(h.player)+'</td><td>'+duelActionText(h.cpu)+'</td><td>'+h.type+'<small>ΔEc '+signed(h.board.ec*.02)+' / ΔEv '+signed(h.board.ev*.02)+' eV</small><small>目標比例比較值：你 '+pct(h.playerQuality)+' / 電腦 '+pct(h.cpuQuality)+'</small></td><td>你 +'+h.playerGain+' / 電腦 +'+h.cpuGain+'</td></tr>').join('');
+}
+
+/* DUEL END */
+function svgText(x,y,text,cls='',size=14,anchor='start'){return '<text x="'+x+'" y="'+y+'" text-anchor="'+anchor+'" class="band-text '+cls+'" font-size="'+size+'">'+text+'</text>';}
+function renderComparison(){document.querySelectorAll('.type-card').forEach(card=>{const svg=card.querySelector('.mini-band'),w=Math.max(250,svg.clientWidth),l=16,z=w-16,m=w/2,a=(l+m)/2,b=(m+z)/2,isI=card.dataset.type==='Type I';let s='<path d="M'+l+' 42H'+m+'V62H'+z+'" stroke="#2267d1" stroke-width="3" fill="none"/><path d="M'+l+' '+(isI?128:103)+'H'+m+'V'+(isI?108:128)+'H'+z+'" stroke="#bc5d0c" stroke-width="3" fill="none"/><path d="M'+m+' 9V143" stroke="#b2bdcd" stroke-dasharray="4 4"/>'+svgText(a,20,'材料 A','svg-muted',14,'middle')+svgText(b,20,'材料 B','svg-muted',14,'middle');for(const dx of [-23,0,23])s+='<circle cx="'+(b+dx)+'" cy="47" r="5" fill="#2267d1"/><circle cx="'+((isI?b:a)+dx)+'" cy="122" r="5" fill="#fff" stroke="#bc5d0c" stroke-width="2"/>';s+=isI?svgText(b,89,'同側聚集','',14,'middle'):svgText(a,83,'電洞在 A','svg-orange',14,'middle')+svgText(b,99,'電子在 B','svg-blue',14,'middle');svg.setAttribute('viewBox','0 0 '+w+' 154');svg.innerHTML=s;});}
+function renderBand(r){
+  const svg=$('bandDiagram'),w=Math.max(290,svg.clientWidth),h=390,left=47,right=w-25,mid=(left+right)/2,top=54,bottom=326;
+  const y=e=>top+(2.6-e)/3.5*(bottom-top),ca=y(1.6),cb=y(1.6+r.ec),va=y(0),vb=y(r.ev);
+  const aw=(mid-left),bw=(right-mid),small=w<480;
+  let markup='<title id="bandTitle">半導體異質接面的能帶圖</title><desc id="bandDesc">'+r.title+'。導帶位差 '+signed(r.ec)+' eV，價帶位差 '+signed(r.ev)+' eV。</desc>';
+  markup+='<defs><marker id="axisArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#7f90a4"/></marker><marker id="blueArrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#2267d1"/></marker><marker id="orangeArrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#bc5d0c"/></marker></defs>';
+  markup+='<rect x="'+left+'" y="'+top+'" width="'+aw+'" height="'+(bottom-top)+'" fill="#f2f6fc"/><rect x="'+mid+'" y="'+top+'" width="'+bw+'" height="'+(bottom-top)+'" fill="#f7f9fb"/>';
+  for(let e=-.5;e<=2.5;e+=.5){const yy=y(e);markup+='<line x1="'+left+'" x2="'+right+'" y1="'+yy+'" y2="'+yy+'" stroke="#e1e8f0" stroke-dasharray="3 4"/>'+svgText(left-15,yy+5,e.toFixed(1),'svg-muted',13,'end');}
+  markup+='<path d="M'+left+' '+top+'H'+mid+'V'+ca+'H'+left+'Z M'+mid+' '+top+'H'+right+'V'+cb+'H'+mid+'Z" fill="#2267d1" opacity=".07"/><path d="M'+left+' '+va+'H'+mid+'V'+bottom+'H'+left+'Z M'+mid+' '+vb+'H'+right+'V'+bottom+'H'+mid+'Z" fill="#bc5d0c" opacity=".075"/>';
+  markup+='<line x1="'+mid+'" x2="'+mid+'" y1="'+(top-8)+'" y2="'+(bottom+6)+'" stroke="#8696ab" stroke-dasharray="5 5"/>';
+  markup+=svgText(left+aw/2,31,'材料 A','',16,'middle')+svgText(mid+bw/2,31,'材料 B','',16,'middle');
+  markup+='<path d="M'+left+' '+ca+'H'+mid+'V'+cb+'H'+right+'" class="plot-line" stroke="#2267d1"/><path d="M'+left+' '+va+'H'+mid+'V'+vb+'H'+right+'" class="plot-line" stroke="#bc5d0c"/>';
+  markup+=svgText(left+7,ca+22,'E<tspan baseline-shift="sub" font-size="11">C</tspan>','svg-blue',16)+svgText(left+7,va+24,'E<tspan baseline-shift="sub" font-size="11">V</tspan>','svg-orange',16);
+  markup+=svgText(left+aw/2,(ca+va)/2-3,small?'能隙':'能隙 E<tspan baseline-shift="sub" font-size="10">g</tspan>','svg-muted',14,'middle')+svgText(left+aw/2,(ca+va)/2+20,'1.60 eV','svg-muted',14,'middle');
+  markup+=svgText(mid+bw/2,(cb+vb)/2-3,small?'能隙':'能隙 E<tspan baseline-shift="sub" font-size="10">g</tspan>','svg-muted',14,'middle')+svgText(mid+bw/2,(cb+vb)/2+20,r.gapB.toFixed(2)+' eV','svg-muted',14,'middle');
+  const ex=mid+15,hx=mid+15;
+  if(Math.abs(r.ec)>=.04)markup+='<line x1="'+ex+'" x2="'+ex+'" y1="'+ca+'" y2="'+cb+'" stroke="#2267d1" stroke-width="1.4" marker-start="url(#blueArrow)" marker-end="url(#blueArrow)"/>';
+  if(Math.abs(r.ev)>=.04)markup+='<line x1="'+hx+'" x2="'+hx+'" y1="'+va+'" y2="'+vb+'" stroke="#bc5d0c" stroke-width="1.4" marker-start="url(#orangeArrow)" marker-end="url(#orangeArrow)"/>';
+  markup+=svgText(mid+9,Math.min(ca,cb)-42,'ΔE<tspan baseline-shift="sub" font-size="10">C</tspan> '+signed(r.ec)+' eV','svg-blue',small?13:14)+svgText(mid+9,Math.max(va,vb)+44,'ΔE<tspan baseline-shift="sub" font-size="10">V</tspan> '+signed(r.ev)+' eV','svg-orange',small?13:14);
+  for(const carrier of ['e','h']){const fb=carrier==='e'?r.electronB:r.holeB,na=Math.round((1-fb)*20);for(let i=0;i<20;i++){const inA=i<na,sideIndex=inA?i:i-na,count=inA?na:20-na,lo=inA?left:mid,span=inA?aw:bw;const xx=lo+23+(span-46)*(sideIndex+.5)/Math.max(1,count);const edge=carrier==='e'?(inA?ca:cb):(inA?va:vb),yy=edge+(carrier==='e'?-1:1)*(12+(i%3)*8);markup+='<circle cx="'+xx+'" cy="'+yy+'" r="4" fill="'+(carrier==='e'?'#2267d1':'#fff')+'" stroke="'+(carrier==='e'?'#2267d1':'#bc5d0c')+'" stroke-width="1.8"/>';}}
+  markup+='<path d="M'+(left-11)+' '+bottom+'V'+(top-16)+'" stroke="#7f90a4" stroke-width="1.2" fill="none" marker-end="url(#axisArrow)"/><path d="M'+(left-11)+' '+bottom+'H'+(right+10)+'" stroke="#7f90a4" stroke-width="1.2" fill="none" marker-end="url(#axisArrow)"/>';
+  markup+=svgText(14,30,'E','svg-muted',16)+svgText(8,48,'eV','svg-muted',13)+svgText(mid,354,'介面','svg-muted',14,'middle')+svgText(right,378,'位置 x','svg-muted',14,'end');
+  svg.setAttribute('viewBox','0 0 '+w+' '+h);svg.innerHTML=markup;
+}
+function renderDensity(id,fb,color,name){
+  const svg=$(id),w=Math.max(260,svg.clientWidth),left=28,right=w-12,mid=(left+right)/2,base=64,ya=base-(1-fb)*42,yb=base-fb*42;
+  svg.setAttribute('viewBox','0 0 '+w+' 90');svg.setAttribute('aria-label',name+'相對分布：A '+pct(1-fb)+'，B '+pct(fb));
+  svg.innerHTML='<path d="M'+left+' '+base+'V'+ya+'H'+mid+'V'+yb+'H'+right+'V'+base+'Z" fill="'+color+'" opacity=".08"/><path d="M'+left+' '+ya+'H'+mid+'V'+yb+'H'+right+'" fill="none" stroke="'+color+'" stroke-width="2.5"/><line x1="'+left+'" x2="'+right+'" y1="'+base+'" y2="'+base+'" stroke="#bcc9d8"/><line x1="'+mid+'" x2="'+mid+'" y1="12" y2="'+base+'" stroke="#a6b4c4" stroke-dasharray="3 4"/>'+svgText(left,85,'A','svg-muted',14)+svgText(mid,85,'介面','svg-muted',13,'middle')+svgText(right,85,'B','svg-muted',14,'end')+svgText(2,20,'高','svg-muted',12)+svgText(2,65,'低','svg-muted',12);
+}
+function update(){
+  const r=calculate(state.ec,state.ev);
+  $('ecSlider').value=state.ec;$('evSlider').value=state.ev;
+  $('ecValue').innerHTML=signed(state.ec)+' <small>eV</small>';$('evValue').innerHTML=signed(state.ev)+' <small>eV</small>';
+  $('ecSlider').setAttribute('aria-valuetext',signed(state.ec)+' 電子伏特');$('evSlider').setAttribute('aria-valuetext',signed(state.ev)+' 電子伏特');
+  $('ecDirection').textContent=r.eSide==='equal'?'導帶對齊，電子沒有兩側偏好。':r.eSide+' 的導帶較低，電子偏向 '+r.eSide+'。';
+  $('evDirection').textContent=r.hSide==='equal'?'價帶對齊，電洞沒有兩側偏好。':r.hSide+' 的價帶較高，電洞偏向 '+r.hSide+'。';
+  $('typeLabel').textContent=r.type;$('resultTitle').textContent=r.title;$('resultDescription').textContent=r.description;
+  for(const [prefix,fb,side] of [['electron',r.electronB,r.eSide],['hole',r.holeB,r.hSide]]){
+    $(prefix+'A').textContent=pct(1-fb);$(prefix+'B').textContent=pct(fb);
+    $(prefix+'BarA').style.width=(1-fb)*100+'%';$(prefix+'BarB').style.width=fb*100+'%';
+    $(prefix+'Target').textContent=side==='equal'?'兩側各半':'偏向材料 '+side;
+  }
+  document.querySelectorAll('.preset').forEach(b=>{const v=PRESETS[b.dataset.preset];b.setAttribute('aria-pressed',String(v[0]===state.ec&&v[1]===state.ev));});
+  document.querySelectorAll('.nudge[data-control]').forEach(b=>b.disabled=Number(b.dataset.step)<0?state[b.dataset.control]<=-.5:state[b.dataset.control]>=.5);
+  renderBand(r);renderDensity('electronDensity',r.electronB,'#2267d1','電子');renderDensity('holeDensity',r.holeB,'#bc5d0c','電洞');renderImpact(r);renderComparison();renderMode();renderBattle();renderRoom();
+  return r;
+}
+function setOffsets(ec,ev){if(battle.active||room.active)throw new Error('對戰中請使用出招選項，鎖定後才更新公開能帶。');if(typeof ec!=='number'||typeof ev!=='number'||!Number.isFinite(ec)||!Number.isFinite(ev)||ec<-.5||ec>.5||ev<-.5||ev>.5)throw new Error('位差必須是 −0.50 至 +0.50 eV 的有限數字。');state.ec=Math.round(ec*100)/100;state.ev=Math.round(ev*100)/100;return update();}
+for(const field of ['ec','ev'])$(field+'Slider').addEventListener('input',e=>{state[field]=Math.round(Number(e.target.value)*100)/100;update();});
+document.querySelectorAll('.preset').forEach(b=>b.addEventListener('click',()=>setOffsets(...PRESETS[b.dataset.preset])));
+document.querySelectorAll('.nudge[data-control]').forEach(b=>b.addEventListener('click',()=>{const field=b.dataset.control,next=Math.max(-.5,Math.min(.5,state[field]+Number(b.dataset.step)*.01));setOffsets(field==='ec'?next:state.ec,field==='ev'?next:state.ev);}));
+$('reset').addEventListener('click',()=>setOffsets(...PRESETS['together-b']));
+$('exploreMode').addEventListener('click',()=>selectMode('explore'));$('roomMode').addEventListener('click',()=>selectMode('room'));
+$('battleMode').addEventListener('click',()=>selectMode('battle'));
+$('battleStart').addEventListener('click',()=>startBattle());$('battleReplay').addEventListener('click',()=>startBattle());
+$('battleCommit').addEventListener('click',commitBattle);$('battleNext').addEventListener('click',nextBattle);
+$('battleTip').addEventListener('click',()=>{battle.tip=!battle.tip;update();});
+$('battleReset').addEventListener('click',()=>startBattle());
+$('battleOffset').addEventListener('input',e=>setBattleSlider(e.target.value));
+$('battleMinus').addEventListener('click',()=>setBattleSlider(Number($('battleOffset').value)-1));
+$('battlePlus').addEventListener('click',()=>setBattleSlider(Number($('battleOffset').value)+1));
+document.querySelectorAll('input[name=battleAction]').forEach(r=>r.addEventListener('change',()=>changeBattleKind(r.value)));
+function viewExample(values){setOffsets(...values);document.querySelector('.workspace').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth',block:'start'});}
+document.querySelectorAll('[data-example]').forEach(b=>b.addEventListener('click',()=>viewExample(PRESETS[b.dataset.example])));
+document.querySelectorAll('[data-experiment]').forEach(b=>b.addEventListener('click',()=>viewExample(b.dataset.experiment==='weak'?[-.01,-.01]:[-.12,-.12])));
+/* ROOM BEGIN */
+const room={active:false,credentials:null,data:null,plan:{kind:'own',direction:1,amount:3},poll:null,busy:false,error:'',intent:null};
+let beforeRoom=[state.ec,state.ev];
+function readRoom(){return {active:room.active,connected:!!room.credentials,data:room.data?structuredClone(room.data):null,yourDraft:{...room.plan},syncError:room.error};}
+function roomGame(){const d=room.data;return {controlled:d.controlled,round:d.round,board:d.board,playerBudget:d.yourBudget,plan:room.plan};}
+function saveRoomSession(){try{sessionStorage.setItem('band-room-session',JSON.stringify(room.credentials));}catch{}}
+function stopRoomPolling(){if(room.poll)clearTimeout(room.poll);room.poll=null;}
+function scheduleRoomPoll(){stopRoomPolling();if(room.active&&room.credentials&&room.data?.stage!=='closed'&&room.data?.stage!=='finished')room.poll=setTimeout(async()=>{if(!document.hidden)await refreshRoom();scheduleRoomPoll();},2200);}
+async function roomApi(path,body){
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);
+  try{
+    const headers={'Content-Type':'application/json'};if(room.credentials?.token)headers.Authorization='Bearer '+room.credentials.token;
+    const response=await fetch('/api/rooms'+path,{method:body===undefined?'GET':'POST',headers,body:body===undefined?undefined:JSON.stringify(body),cache:'no-store',signal:controller.signal});
+    let data;try{data=await response.json();}catch{throw Error('連線尚未就緒，請稍後重新同步。');}
+    if(!response.ok){const error=Error(data.error||'房間同步失敗。');error.status=response.status;throw error;}return data;
+  }catch(e){if(e.name==='AbortError'||e instanceof TypeError)throw Error('連線中斷，請重新同步；已鎖定的動作仍會保留。');throw e;}finally{clearTimeout(timeout);}
+}
+function receiveRoom(d){
+  if(room.credentials&&d.code!==room.credentials.code)return;
+  if(room.data?.code===d.code&&room.data.version>d.version)return;
+  const fresh=!room.data||room.data.code!==d.code||room.data.round!==d.round||room.data.stage!=='plan'&&d.stage==='plan';
+  room.data=d;room.error='';
+  if(fresh&&d.stage==='plan'){
+    const direction=d.controlled==='ec'?(d.goal.eSide==='B'?-1:1):(d.goal.hSide==='B'?1:-1),preferred={kind:'own',direction,amount:d.round===1?3:1};
+    room.plan=preferred;try{duelActionInfo(roomGame(),'player',preferred);}catch{room.plan=duelActions({...roomGame(),cpuBudget:d.opponentBudget},'player')[0]||{kind:'hold',direction:1,amount:0};}
+    room.intent=null;
+  }
+  if(d.yourLockedAction)room.plan={...d.yourLockedAction};
+  if(room.active){state.ec=d.board.ec*.02;state.ev=d.board.ev*.02;}update();
+}
+async function refreshRoom(){
+  if(!room.credentials)return;try{receiveRoom(await roomApi('/'+room.credentials.code));}catch(e){room.error=e.message;if([404,410,401,403].includes(e.status)){room.credentials=null;room.data=null;stopRoomPolling();try{sessionStorage.removeItem('band-room-session');}catch{}}update();}
+}
+function enterRoom(){if(!room.active)beforeRoom=[state.ec,state.ev];room.active=true;battle.active=false;if(room.data){state.ec=room.data.board.ec*.02;state.ev=room.data.board.ev*.02;}update();if(room.credentials){refreshRoom();scheduleRoomPoll();}return readRoom();}
+async function connectRoom(kind,code=''){
+  if(room.busy)return;room.busy=true;room.error='';update();
+  try{
+    if(location.protocol==='file:')throw Error('雙人房間需要連線，請開啟線上網站。');
+    if(kind==='join'&&!/^[A-Z2-9]{6}$/.test(code.trim().toUpperCase()))throw Error('請輸入 6 碼房間代號。');
+    const result=await roomApi(kind==='create'?'':'/'+code.trim().toUpperCase()+'/join',{});
+    room.credentials={code:result.view.code,token:result.token};saveRoomSession();room.data=null;receiveRoom(result.view);scheduleRoomPoll();
+  }catch(e){room.error=e.message;}finally{room.busy=false;update();}return readRoom();
+}
+async function createRoom(){return connectRoom('create');}
+async function joinRoom(code=$('roomCodeInput').value){return connectRoom('join',code);}
+function planRoom(input){if(!room.active||!room.data||room.data.stage!=='plan'||room.data.yourLocked||room.busy)throw Error('目前不能更改秘密動作。');const plan=normalizeDuelAction(input);duelActionInfo(roomGame(),'player',plan);room.plan=plan;update();return readRoom();}
+function setRoomSlider(value){
+  if(!room.data||room.data.stage!=='plan'||room.data.yourLocked||room.busy)return;
+  const b=battleSliderBounds(roomGame()),target=Math.max(b.min,Math.min(b.max,Math.round(Number(value)))),delta=target-b.baseline;
+  room.plan={kind:room.plan.kind,direction:delta<0?-1:1,amount:Math.abs(delta)};update();
+}
+function changeRoomKind(kind){
+  if(!room.data||room.data.stage!=='plan'||room.data.yourLocked||room.busy)return;
+  if(kind==='hold')room.plan={kind,direction:1,amount:0};
+  else{const b=battleSliderBounds(roomGame(),kind),target=Math.max(b.min,Math.min(b.max,b.baseline+room.plan.direction*(room.plan.amount||1))),delta=target-b.baseline;room.plan={kind,direction:delta<0?-1:1,amount:Math.abs(delta)};}update();
+}
+async function sendRoomAction(kind){
+  if(!room.data||room.busy)return;
+  if(kind==='lock'){try{duelActionInfo(roomGame(),'player',room.plan);}catch(e){room.error=e.message;update();return;}}
+  room.busy=true;room.error='';const round=room.data.round,signature=JSON.stringify([kind,round,kind==='lock'?room.plan:null]);
+  if(room.intent?.signature!==signature)room.intent={signature,id:crypto.randomUUID()};
+  const body={round,requestId:room.intent.id};if(kind==='lock')body.action={...room.plan};update();
+  try{receiveRoom(await roomApi('/'+room.credentials.code+'/'+kind,body));}catch(e){room.error=e.message;await refreshRoom();}finally{room.busy=false;update();scheduleRoomPoll();}return readRoom();
+}
+async function leaveRoom(){
+  if(room.busy)return;
+  if(room.data&&!['finished','closed'].includes(room.data.stage)){await sendRoomAction('leave');if(room.credentials&&room.data?.stage!=='closed')return;}
+  room.credentials=null;room.data=null;room.error='';room.intent=null;stopRoomPolling();try{sessionStorage.removeItem('band-room-session');}catch{}state.ec=beforeRoom[0];state.ev=beforeRoom[1];update();
+}
+async function copyRoomCode(){try{await navigator.clipboard.writeText(room.data.code);$('roomCopy').textContent='已複製';}catch{$('roomCopy').textContent='房間代號：'+room.data.code;}}
+function renderRoom(){
+  const active=room.active,d=room.data;document.querySelector('main').classList.toggle('room-active',active);document.querySelector('main').classList.toggle('room-lobby',active&&(!d||!d.joined));$('roomPanel').hidden=!active;$('roomControls').hidden=!active||!d||!d.joined;$('roomLobby').hidden=!!d;$('roomMatch').hidden=!d;$('roomHistory').hidden=!active||!d?.history.length;
+  $('roomError').hidden=!room.error;$('roomError').textContent=room.error;$('roomCreate').disabled=room.busy;$('roomJoin').disabled=room.busy;
+  if(!active)return;
+  $('ecSlider').disabled=true;$('evSlider').disabled=true;document.querySelectorAll('.nudge[data-control]').forEach(b=>b.disabled=true);$('controlHeading').textContent='你的秘密動作';
+  if(!d)return;
+  const planning=d.stage==='plan'&&!d.yourLocked,connected=d.joined,last=d.history.at(-1),q=goalFor(d.goal,d.board);
+  $('roomDisplayCode').textContent=d.code;$('roomRound').textContent=d.stage==='finished'?'五回合結束':d.stage==='closed'?'房間已結束':'第 '+d.round+' / 5 回合'+(d.round===1?' · 設計':' · 攻防');
+  $('roomRole').textContent='你控制'+bandName(d.controlled)+' · 對方控制'+bandName(otherBand(d.controlled));
+  $('roomGoalType').textContent=d.goal.type+' · '+(d.goal.type==='Type I'?'同側聚集':'兩側分離');$('roomGoalSide').textContent='電子在 '+d.goal.eSide+'、電洞在 '+d.goal.hSide;
+  $('roomYourScore').textContent=d.yourScore;$('roomOtherScore').textContent=d.opponentScore;$('roomBudget').textContent='你的剩餘點數 '+d.yourBudget+' / 12';
+  $('roomStatus').textContent=d.stage==='lobby'?'把代號傳給另一支手機，等待對方加入。':d.stage==='closed'?'有玩家離開，這個房間已結束。':d.stage==='finished'?(d.yourScore>d.opponentScore?'你獲勝':d.yourScore<d.opponentScore?'對方獲勝':'平手'):d.stage==='revealed'?(d.yourReady?'你已準備好，等待對方。':'本回合已揭曉；看完結果後，雙方都按準備。'):d.yourLocked?'你已鎖定。'+(d.opponentLocked?'正在揭曉。':'等待對方鎖定；對方看不到你的動作。'):d.opponentLocked?'對方已鎖定；內容保持秘密。':'雙方正在秘密出招。';
+  $('roomOwnShares').innerHTML=last?'<span class="battle-share-e">電子 '+d.goal.eSide+' '+pct(q.eShare)+'</span> · <span class="battle-share-h">電洞 '+d.goal.hSide+' '+pct(q.hShare)+'</span> · 較低 '+pct(q.quality):'開局任務已派發，雙方設計尚未揭曉。';
+  $('roomResults').hidden=!last;$('roomResults').innerHTML=last?'<b>'+(d.stage==='plan'?'上一回合':'回合 '+last.round)+'結果 · '+last.type+'</b><br>'+(last.round===1?'設計完成，不計分。':'你 +'+last.yourGain+' 分 ／ 對方 +'+last.opponentGain+' 分。')+'<br>目標比例較低值：你 '+pct(last.yourQuality)+' ／ 對方 '+pct(last.opponentQuality)+(last.reason==='ratio'?' · 同 Type 比較':last.reason==='unmatched'?' · 未達共同 Type':'')+'<br>你的已揭曉動作：'+duelActionText(last.yourAction):'';
+  $('roomPrepare').hidden=d.stage!=='revealed';$('roomPrepare').disabled=room.busy||d.yourReady;$('roomNew').hidden=!['closed','finished'].includes(d.stage);$('roomLeave').disabled=room.busy;$('roomShare').hidden=connected;
+  $('roomPlanForm').hidden=!planning;$('roomWaiting').hidden=planning||!connected;$('roomWaiting').textContent=d.yourLocked?'你的動作已安全鎖定，等雙方完成後一起揭曉。':d.stage==='revealed'?'本回合已結束；雙方準備好後會進入下一回合。':'這場對戰已結束。';
+  $('roomActionField').hidden=d.round===1;document.querySelectorAll('input[name=roomAction]').forEach(r=>{r.checked=r.value===room.plan.kind;r.disabled=room.busy;});
+  const b=battleSliderBounds(roomGame()),target=b.baseline+(room.plan.kind==='hold'?0:room.plan.direction*room.plan.amount),sub=b.field==='ec'?'C':'V';
+  $('roomOffsetControl').hidden=room.plan.kind==='hold';$('roomOffsetControl').classList.toggle('holes',b.field==='ev');$('roomEditLabel').textContent=(room.plan.kind==='attack'?'干擾對方的':'調整你的')+bandName(b.field)+' · 只有你看得到';
+  $('roomOffsetLabel').innerHTML=bandName(b.field)+'位差 ΔE<sub>'+sub+'</sub>';$('roomOffsetValue').innerHTML=signed(target*.02)+' <small>eV</small>';$('roomOffsetFormula').innerHTML='ΔE<sub>'+sub+'</sub> = E<sub>'+sub+',B</sub> − E<sub>'+sub+',A</sub>';
+  const slider=$('roomOffset');slider.min=b.min;slider.max=b.max;slider.value=target;slider.disabled=room.busy||b.min===b.max;slider.setAttribute('aria-valuetext',signed(target*.02)+' eV');$('roomOffsetMin').textContent=signed(b.min*.02);$('roomOffsetMid').textContent=signed(b.baseline*.02);$('roomOffsetMax').textContent=signed(b.max*.02)+' eV';
+  $('roomBaseline').textContent='公開 '+signed(b.baseline*.02)+' → 計畫 '+signed(target*.02)+' eV（移動 '+signed((target-b.baseline)*.02)+'）';$('roomMinus').disabled=room.busy||target<=b.min;$('roomPlus').disabled=room.busy||target>=b.max;
+  let info,error='';try{info=duelActionInfo(roomGame(),'player',room.plan);}catch(e){error=e.message;}if(room.plan.kind!=='hold'&&room.plan.amount===0)error=d.round===1?'請選擇非零位差完成設計。':'未移動；請調整滑桿，或選擇保留點數。';
+  $('roomCost').textContent=error||'本次花費 '+info.cost+' 點 · 剩餘 '+(d.yourBudget-info.cost)+' 點';$('roomCost').classList.toggle('over',!!error);$('roomCommit').disabled=room.busy||!!error||!planning;$('roomCommit').textContent=room.busy?'正在鎖定…':'鎖定我的秘密動作';
+  $('roomDirection').textContent=b.field==='ec'?'降低 B 導帶，電子偏向 B；提高則偏向 A。':'提高 B 價帶，電洞偏向 B；降低則偏向 A。';
+  if(error)$('roomPreview').textContent='調整後才能鎖定。';else if(d.round===1)$('roomPreview').textContent='你的秘密設計不會傳給對方。兩條能帶都揭曉後，才知道 Type 和完整比例。';else{const board={...d.board};board[info.field]+=info.delta;const trial=goalFor(d.goal,board),r=carrierModel(board.ec*.02,board.ev*.02);$('roomPreview').innerHTML='<b>私人試算 · 假設對方不移動</b><br>'+r.type+' · 電子 '+d.goal.eSide+' '+pct(trial.eShare)+'、電洞 '+d.goal.hSide+' '+pct(trial.hShare)+'<br>較低一項 '+pct(trial.quality)+'。雙方揭曉後才確定結果。';}
+  $('battlePublicNote').hidden=false;$('battlePublicNote').textContent=last?'主圖與下方比例只顯示已揭曉結果。你的本回合計畫保留在私人操作區。':'目前是零位差起點；雙方秘密設計尚未揭曉。';
+  $('roomHistory').hidden=!last;$('roomHistoryBody').innerHTML=d.history.map(h=>'<tr><td>'+h.round+'</td><td>'+duelActionText(h.yourAction)+'</td><td>'+h.type+'<small>ΔEc '+signed(h.board.ec*.02)+' / ΔEv '+signed(h.board.ev*.02)+' eV</small></td><td>你 +'+h.yourGain+' ／ 對方 +'+h.opponentGain+'</td></tr>').join('');
+}
+$('roomCreate').addEventListener('click',createRoom);$('roomJoin').addEventListener('click',()=>joinRoom());$('roomCodeInput').addEventListener('input',e=>e.target.value=e.target.value.toUpperCase());$('roomCodeInput').addEventListener('keydown',e=>{if(e.key==='Enter')joinRoom();});
+$('roomCommit').addEventListener('click',()=>sendRoomAction('lock'));$('roomPrepare').addEventListener('click',()=>sendRoomAction('ready'));$('roomSync').addEventListener('click',refreshRoom);$('roomLeave').addEventListener('click',leaveRoom);$('roomNew').addEventListener('click',async()=>{await leaveRoom();if(!room.credentials)await createRoom();});$('roomCopy').addEventListener('click',copyRoomCode);
+$('roomOffset').addEventListener('input',e=>setRoomSlider(e.target.value));$('roomMinus').addEventListener('click',()=>setRoomSlider(Number($('roomOffset').value)-1));$('roomPlus').addEventListener('click',()=>setRoomSlider(Number($('roomOffset').value)+1));document.querySelectorAll('input[name=roomAction]').forEach(r=>r.addEventListener('change',()=>changeRoomKind(r.value)));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&room.active&&room.credentials)refreshRoom();});window.addEventListener('pagehide',stopRoomPolling);
+try{const saved=JSON.parse(sessionStorage.getItem('band-room-session')||'null');if(saved&&/^[A-Z2-9]{6}$/.test(saved.code)&&/^[a-f0-9]{64}$/.test(saved.token)){room.credentials=saved;room.active=true;refreshRoom();scheduleRoomPoll();}}catch{}
+const invitedCode=new URLSearchParams(location.search).get('room');if(invitedCode){$('roomCodeInput').value=invitedCode.toUpperCase().slice(0,6);room.active=true;}
+
+/* ROOM END */
+new ResizeObserver(()=>update()).observe($('bandDiagram'));
+update();
+const modelContext=document.modelContext||navigator.modelContext;
+if(modelContext?.registerTool){
+  const toolLifecycle=new AbortController();
+  const readState=()=>({offsets_eV:{conduction:state.ec,valence:state.ev},temperature_K:300,...calculate(state.ec,state.ev),duel:readBattle(),room:readRoom(),assumptions:'Ideal flat bands, equal volumes and effective densities of states, dilute carriers.'});
+  const tools=[
+    {name:'get_band_distribution',title:'讀取能帶與載子分布',description:'Read the current conduction and valence offsets, relative carrier distribution, duel and own room state without changing the page.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:false},execute:input=>{requireEmptyInput(input);return readState();}},
+    {name:'set_band_offsets',title:'調整導帶與價帶位差',description:'Set both band offsets in eV, rounded to the visible slider step of 0.01 eV, and update the band diagram and relative carrier distribution.',inputSchema:{type:'object',properties:{conduction_eV:{type:'number',minimum:-.5,maximum:.5},valence_eV:{type:'number',minimum:-.5,maximum:.5}},required:['conduction_eV','valence_eV'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:input=>{if(!input||Object.keys(input).some(k=>!['conduction_eV','valence_eV'].includes(k)))throw new Error('請提供導帶與價帶位差。');setOffsets(input.conduction_eV,input.valence_eV);return readState();}},
+    {name:'start_band_duel',title:'Shuffle 電腦對戰',description:'Start a new five-round computer duel. Shuffle assigns distinct Type I or Type II goals with fixed electron and hole collection sides. controlled is optional; omit it to also shuffle the controlled band.',inputSchema:{type:'object',properties:{controlled:{type:'string',enum:['ec','ev']}},additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:input=>{if(!input||typeof input!=='object'||Object.keys(input).some(k=>k!=='controlled'))throw Error('參數無效。');return startBattle(input.controlled);}},
+    {name:'plan_band_duel_action',title:'規劃秘密動作',description:'Select a legal duel action without applying it to the public diagram or revealing the computer plan. own costs 1 point per 0.02 eV, attack costs 2; hold costs 0. direction is +1 or -1, amount is the number of 0.02 eV steps. First round requires own, at most 4 steps; later rounds at most 2 steps.',inputSchema:{type:'object',properties:{kind:{type:'string',enum:['own','attack','hold']},direction:{type:'integer',enum:[-1,1]},amount:{type:'integer',minimum:0,maximum:4}},required:['kind','direction','amount'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:input=>planBattle(input)},
+    {name:'reveal_band_duel_round',title:'鎖定動作並揭曉',description:'Commit the selected player action and resolve both previously committed actions simultaneously. Deduct both costs, reveal the round and score it once. First round is unscored; the fifth round ends the match. Rejects duplicate submissions.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:input=>{requireEmptyInput(input);return commitBattle();}},
+    {name:'advance_band_duel_round',title:'準備下一攻防回合',description:'Advance only after a revealed, non-final duel round. The computer commits its next action using only public state and budgets, before the player selects an action.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:input=>{requireEmptyInput(input);return nextBattle();}},
+    {name:'create_band_room',title:'建立雙人房間',description:'Create a two-player room and return only your mission, private draft and public results. Share its six-character code with the other player.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:async input=>{requireEmptyInput(input);enterRoom();return await createRoom();}},
+    {name:'join_band_room',title:'加入雙人房間',description:'Join a room using its six-character code. Return only your own mission and action, plus shared revealed results.',inputSchema:{type:'object',properties:{code:{type:'string',pattern:'^[A-Z2-9]{6}$'}},required:['code'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:async input=>{if(!input||Object.keys(input).some(k=>k!=='code')||typeof input.code!=='string')throw Error('請提供房間代號。');enterRoom();return await joinRoom(input.code);}},
+    {name:'plan_band_room_action',title:'調整雙人房間秘密動作',description:'Plan your own legal action privately. The board remains at its last revealed state until both players lock. own costs 1 point per step; attack costs 2; first round requires own, at most 4 steps; later rounds at most 2.',inputSchema:{type:'object',properties:{kind:{type:'string',enum:['own','attack','hold']},direction:{type:'integer',enum:[-1,1]},amount:{type:'integer',minimum:0,maximum:4}},required:['kind','direction','amount'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:input=>planRoom(input)},
+    {name:'lock_band_room_action',title:'鎖定雙人房間動作',description:'Lock your current secret action. Only reveal the combined board and scores after the opponent also locks.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:async input=>{requireEmptyInput(input);return await sendRoomAction('lock');}},
+    {name:'prepare_band_room_round',title:'雙人房間準備下一回合',description:'Mark yourself ready after a revealed round. The next round starts only when both players are ready.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:async input=>{requireEmptyInput(input);return await sendRoomAction('ready');}}
+  ];
+  for(const tool of tools){try{Promise.resolve(modelContext.registerTool(tool,{signal:toolLifecycle.signal})).catch(()=>{});}catch{}}
+  window.addEventListener('pagehide',()=>toolLifecycle.abort(),{once:true});
+}
+</script>
+</body>
+</html>

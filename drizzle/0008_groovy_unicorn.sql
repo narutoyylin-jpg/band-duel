@@ -1,0 +1,1 @@
+ALTER TABLE `duel_profile_extras` ADD `avatar_background` text DEFAULT 'midnight' NOT NULL;

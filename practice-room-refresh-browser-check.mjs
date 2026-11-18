@@ -1,0 +1,56 @@
+import {D1TeamStore,handleTeamRequest} from './team-service.mjs';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import http from 'node:http';
+import {DatabaseSync} from 'node:sqlite';
+import {D1SocialStore,handleSocialRequest} from './social.mjs';
+import {D1RoomStore,handleRoomRequest} from './rooms-service.mjs';
+import {D1EconomyStore,handleShopRequest} from './economy.mjs';
+import {D1RankingStore,handleRankingRequest} from './ranking.mjs';
+const {chromium}=await import('file:///C:/Users/algra/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs');
+const sqlite=new DatabaseSync(':memory:');sqlite.exec(fs.readFileSync('standalone/schema.sql','utf8'));
+const db={prepare(sql){let v=[];return {bind(...values){v=values;return this;},first(){return sqlite.prepare(sql).get(...v)||null;},all(){return {results:sqlite.prepare(sql).all(...v)};},run(){return {meta:{changes:Number(sqlite.prepare(sql).run(...v).changes)}};}};},batch(statements){sqlite.exec('BEGIN');try{const r=statements.map(s=>s.run());sqlite.exec('COMMIT');return r;}catch(e){sqlite.exec('ROLLBACK');throw e;}}};
+let testClockOffset=0;const teams=new D1TeamStore(db);const social=new D1SocialStore(db),rooms=new D1RoomStore(db),economy=new D1EconomyStore(db),ranking=new D1RankingStore(db),errors=[];
+for(const [id,name] of [['qa-alice','Alice'],['qa-bob','Bob'],['qa-cara','Cara'],['qa-dan','Dan']])await ranking.rename(id,name,Date.now());
+const server=http.createServer(async(req,res)=>{
+ try{
+  const base='http://127.0.0.1:'+server.address().port,url=new URL(req.url,base),headers=new Headers();for(const [k,v] of Object.entries(req.headers))if(v)headers.set(k,Array.isArray(v)?v.join(','):v);
+  headers.delete('oai-authenticated-user-id');if(req.headers['x-test-player'])headers.set('oai-authenticated-user-id',String(req.headers['x-test-player']));
+  const body=[];for await(const chunk of req)body.push(chunk);const request=new Request(url,{method:req.method,headers,...(!['GET','HEAD'].includes(req.method)?{body:Buffer.concat(body)}:{})});let response;
+  if(url.pathname.startsWith('/api/team-rooms'))response=await handleTeamRequest(request,teams,Date.now()+testClockOffset);
+  else if(url.pathname.startsWith('/api/friends'))response=await handleSocialRequest(request,social);
+  else if(url.pathname.startsWith('/api/rooms'))response=await handleRoomRequest(request,rooms,Date.now()+testClockOffset);
+  else if(url.pathname.startsWith('/api/shop'))response=await handleShopRequest(request,economy);
+  else if(url.pathname==='/api/leaderboard')response=await handleRankingRequest(request,ranking);
+  else if(url.pathname==='/api/auth/config')response=Response.json({provider:'google',configured:true,signedIn:true});
+  else if(url.pathname==='/play'||url.pathname==='/')response=new Response(fs.readFileSync('phone.html'),{headers:{'Content-Type':'text/html; charset=utf-8'}});
+  else{
+   const root=path.resolve('public'),file=path.resolve(root,'.'+decodeURIComponent(url.pathname));
+   if(file.startsWith(root+path.sep)&&fs.existsSync(file)&&fs.statSync(file).isFile()){const mime={'.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.js':'text/javascript','.webmanifest':'application/manifest+json','.html':'text/html; charset=utf-8'}[path.extname(file)]||'application/octet-stream';response=new Response(fs.readFileSync(file),{headers:{'Content-Type':mime}});}else response=new Response('Not found',{status:404});
+  }
+  res.writeHead(response.status,Object.fromEntries(response.headers));res.end(Buffer.from(await response.arrayBuffer()));
+ }catch(e){errors.push(String(e.stack||e));res.writeHead(500);res.end('Test server error');}
+});
+await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin='http://127.0.0.1:'+server.address().port;
+const browser=await chromium.launch({headless:true,channel:'msedge'});
+try{
+
+ const ids=['qa-alice','qa-bob','qa-cara','qa-dan'];for(const id of ids.slice(1)){await social.ensure('qa-alice',Date.now());await social.ensure(id,Date.now());await social.request('qa-alice',id,Date.now());await social.change(id,'qa-alice','accept',Date.now());}
+ const pages=[];for(const id of ids){const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,reducedMotion:'reduce',extraHTTPHeaders:{'x-test-player':id}});await context.route('**/*',r=>r.request().url().startsWith(origin)?r.continue():r.abort());const page=await context.newPage();page.setDefaultTimeout(18000);page.on('pageerror',e=>errors.push(e.message));await page.goto(origin+'/play');pages.push(page);}
+ const [alice,bob,cara,dan]=pages;const logo=await alice.locator('#coverLogo').boundingBox(),profile=await alice.locator('#coverProfile').boundingBox();assert(profile.y+profile.height<=logo.y,'profile does not overlap logo');await alice.screenshot({path:'output/band-duel-clean-home.png',fullPage:true});
+ await alice.locator('#practice').click();await alice.locator('#practiceStart').click();await alice.locator('#versusContinue').click();await alice.locator('#roleEc').click();assert.equal(await alice.locator('[data-mode]:visible').count(),4);await alice.locator('[data-mode="together"]').click();await alice.locator('#coinContinue:enabled').click();await alice.locator('#offset:enabled').waitFor();
+ assert.equal((await alice.evaluate(()=>ui.data.clock)).duration,30000);assert((await alice.locator('#playGraph').boundingBox()).height>=300);assert.equal(await alice.locator('#playGraph foreignObject').count(),2);await alice.screenshot({path:'output/band-duel-large-solo-battle.png',fullPage:true});await alice.locator('#lock').scrollIntoViewIfNeeded();const mission=await alice.locator('#missionCard').boundingBox(),game=await alice.locator('#game').boundingBox();assert(mission.y<=game.y+5,'solo mission stays visible when controls scroll');await alice.locator('.topbar>.home-link').click();
+ // The room preview shows the creator and capacity before inviting.
+ await alice.locator('#create').click();assert.equal(await alice.locator('#roomSetupRoster .room-slot').count(),2);await alice.locator('[data-room-rounds="12"]').click();await alice.locator('#roomSetupInvite').click();await alice.locator('#friendsTitle').filter({hasText:'選擇'}).waitFor();await alice.locator('.friend-row').filter({hasText:'Bob'}).locator('[data-social-op="invite"]').click();await alice.locator('#friendsClose').click();await alice.locator('#roomWaitingRoster').waitFor({state:'visible'});assert.equal(await alice.locator('#roomWaitingRoster .room-slot').count(),2);
+ await bob.locator('#friendsOpen').click();await bob.locator('[data-join-invite]').first().click();await Promise.all([alice,bob].map(p=>p.locator('#versusContinue').waitFor({state:'visible'})));await Promise.all([alice,bob].map(p=>p.locator('#versusContinue').click()));await alice.locator('#roleEc').click();await bob.locator('#roleEv').click();await alice.locator('[data-mode="shuffle"]').waitFor({state:'visible'});assert.equal(await alice.locator('[data-mode]:visible').count(),1,'formal room offers Shuffle only');assert.equal(await alice.locator('[data-rounds="12"]').getAttribute('aria-pressed'),'true');await alice.locator('.topbar>.home-link').click();await bob.locator('#closedBack').click();
+ await alice.locator('#create').click();await alice.locator('[data-room-format="2v2"]').click();assert.equal(await alice.locator('#roomSetupRoster .room-slot').count(),4);await alice.locator('[data-room-rounds="5"]').click();await alice.screenshot({path:'output/band-duel-room-setup-four.png',fullPage:true});await alice.locator('#roomCreateSubmit').click();await alice.locator('#teamFriends').click();
+ for(const name of ['Bob','Cara','Dan'])await alice.locator('.friend-row').filter({hasText:name}).locator('[data-social-op="invite"]').click();await alice.locator('#friendsClose').click();for(const p of [bob,cara,dan]){await p.locator('#friendsOpen').click();await p.locator('[data-join-invite]').first().click();await p.locator('#teamRoster').waitFor({state:'visible'});}
+ await Promise.all(pages.map(p=>p.locator('#teamReady').click()));await alice.locator('#teamStart:enabled').click();await alice.locator('#teamLock:enabled').waitFor();assert.equal((await alice.evaluate(()=>ui.data.clock)).duration,30000);assert.equal(await alice.locator('#teamGraph [data-band-avatar]').count(),4);await alice.locator('#teamLock').scrollIntoViewIfNeeded();const hud=await alice.locator('.battle-hud').boundingBox();assert(hud.y>=0&&hud.y+hud.height<844,'team mission and points remain on screen');await alice.screenshot({path:'output/band-duel-readable-team-battle.png',fullPage:true});await Promise.all(pages.map(p=>p.locator('.topbar>.home-link').click()));
+ // Background training stays in the same 2v2 format, then hands off to humans.
+ await alice.locator('[data-match-format="2v2"]').click();await alice.locator('#match').click();await alice.locator('#teamMatchSolo').click();await alice.locator('#waitingPractice').filter({hasText:'2v2 練習'}).waitFor();await alice.locator('#waitingPractice').click();await alice.locator('#teamRoster .avatar-robot').first().waitFor();let practiceView=await alice.evaluate(()=>ui.data);const practiceCode=practiceView.code;assert.equal(practiceView.computer,true);assert.equal(await alice.locator('#teamRoster .avatar-robot').count(),3);
+ await alice.locator('[data-team-practice-mode="together"]').click();await alice.locator('#teamReady').click();await alice.locator('#teamStart:enabled').click();await alice.locator('#teamLock:enabled').waitFor();assert.equal((await alice.evaluate(()=>ui.data)).goals[(await alice.evaluate(()=>ui.data)).yourTeam],'Type I');await alice.screenshot({path:'output/band-duel-queued-team-practice.png',fullPage:true});
+ for(const p of [bob,cara,dan]){await p.locator('[data-match-format="2v2"]').click();await p.locator('#match').click();await p.locator('#teamMatchSolo').click();}
+ await Promise.all(pages.map(p=>p.locator('#teamRoster').waitFor({state:'visible'})));await alice.locator('#queuePracticeBanner').waitFor({state:'hidden'});const matched=await alice.evaluate(()=>ui.data);assert.equal(matched.computer,false);assert.equal(matched.mode,'shuffle');assert.equal(new Set(await Promise.all(pages.map(p=>p.locator('#teamCode').innerText()))).size,1);await alice.waitForTimeout(300);assert.equal((await teams.get(practiceCode)).stage,'closed','background CPU room is closed on handoff');await alice.locator('.topbar>.home-link').click();assert.deepEqual(errors,[]);
+ console.log('Passed: unobstructed cover logo, practice-only Type pairings, 30-second solo/team clocks, large solo chart, avatar bands, sticky mission/point HUDs, two/four-seat room preview, friend picker, official Shuffle and 2v2 CPU-to-human handoff.');
+}catch(error){console.error('Browser errors:',JSON.stringify(errors));for(const context of browser.contexts())for(const page of context.pages())console.error(await page.evaluate(()=>({error:ui.error,stage:ui.data?.stage,skills:ui.data?.skills,players:ui.data?.players?.map(p=>({slot:p.slot,ready:p.ready})),busy:ui.busy})).catch(()=>null));throw error;}finally{await browser.close();await new Promise(r=>server.close(r));sqlite.close();}

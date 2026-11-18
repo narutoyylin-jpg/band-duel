@@ -1,0 +1,18 @@
+{
+  "id": "/",
+  "name": "Band Duel",
+  "short_name": "Band Duel",
+  "description": "能帶對決：秘密出招，一起揭曉。",
+  "lang": "zh-Hant",
+  "start_url": "/play?source=app",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "prefer_related_applications": false,
+  "icons": [
+    {"src":"/app-icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"/app-icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
+    {"src":"/app-icon-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}
+  ]
+}

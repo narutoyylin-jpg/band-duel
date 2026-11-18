@@ -1,0 +1,48 @@
+const teamMatchUi={format:'1v1',kind:'random',rounds:5};
+try{if(localStorage.getItem('band-match-format')==='2v2')teamMatchUi.format='2v2';}catch{}
+function renderMatchFormat(){renderAbilityRules();
+ $('matchFormatLabel').textContent=tx('對戰人數','Match size');
+ for(const b of document.querySelectorAll('[data-match-format]')){b.setAttribute('aria-pressed',String(teamMatchUi.format===b.dataset.matchFormat));b.disabled=ui.busy||!!ui.data||!!ui.queue;}
+ $('match').textContent=(teamMatchUi.format==='2v2'?'2v2 · ':'')+tx('隨機配對','Random match');$('rankedMatch').textContent=(teamMatchUi.format==='2v2'?'2v2 · ':'')+tx('牌位配對','Ranked match');
+ $('matchFormatHint').textContent=teamMatchUi.format==='2v2'?tx('單人或邀一位好友同隊 · Shuffle','Solo or bring one friend · Shuffle'):tx('一對一對戰','One-on-one duel');
+}
+function openTeamMatchEntry(kind){
+ if(ui.busy||ui.data||ui.queue)return;teamMatchUi.kind=kind;renderTeamMatchEntry();$('teamMatchEntry').showModal();
+}
+function renderTeamMatchEntry(){
+ const team=teamMatchUi.format==='2v2',ranked=teamMatchUi.kind==='ranked';renderAbilityRules();$('matchAbilityRules').hidden=ranked;
+ $('teamMatchTitle').textContent=(team?'2v2 · ':'1v1 · ')+tx(ranked?'牌位配對':'隨機配對',ranked?'Ranked match':'Random match');$('teamMatchClose').textContent=tx('關閉','Close');
+ $('teamMatchIntro').textContent=ranked?team?tx('經典規則，無技能。以隊伍平均積分配對；至少兩位真人即可開玩，空位由電腦補上，結果照常計入積分、排行榜與月結。','Classic rules, no abilities. Match by team average rating. At least two humans can play, with CPUs filling empty seats; results still count toward rating, leaderboard and monthly season.'):tx('經典規則，無技能。尋找接近積分的真人對手，結果計入積分、排行榜與月結。','Classic rules, no abilities. Find a similarly rated human opponent; results count toward rating, leaderboard and monthly season.'):team?tx('先選經典或技能模式，再單人排隊或邀好友同隊。至少兩位真人即可開玩，空位由電腦補上；休閒場不影響積分。','Choose Classic or Skill mode, then queue solo or bring a friend. At least two humans can play, with CPUs filling empty seats. Casual matches do not affect rating.'):tx('先選經典或技能模式，再開始尋找對手。休閒場不影響積分。','Choose Classic or Skill mode, then start finding an opponent. Casual matches do not affect rating.');
+ $('teamMatchRoundsLabel').hidden=!team;$('teamMatchRounds').hidden=!team;$('teamMatchParty').hidden=!team;
+ $('teamMatchRoundsLabel').textContent=tx('回合數／每人點數','Rounds / points per player');$('teamMatchRounds').innerHTML=[5,12].map(n=>'<button type="button" data-match-rounds="'+n+'" aria-pressed="'+(n===teamMatchUi.rounds)+'">'+n+tx(' 回合 · ',' rounds · ')+DUEL_LENGTHS[n]+tx(' 點',' pts')+'</button>').join('');
+ $('teamMatchSolo').textContent=team?tx('單人排隊','Queue solo'):tx('開始配對','Start matching');$('teamMatchParty').textContent=tx('邀好友同隊','Bring a friend');$('teamMatchHint').textContent=team?tx('同隊任務相同，隊友計畫隱藏；可即時觀察同角色對手。每人每回合只出一個動作。','Share a mission, keep teammate plans hidden, and watch your same-role opponent live. Each player submits one action per round.'):tx('經典模式只用基本動作；技能模式開局隨機抽三種技能，再選一種。','Classic uses basic moves. Skill mode offers three random abilities; choose one at the start.');$('teamMatchStatus').textContent=ui.error||'';
+}
+async function queueTeamMatch(party){
+ if(ui.busy||ui.data||ui.queue)return;
+ if(teamMatchUi.format==='1v1'){await connect('match');if(ui.credentials)$('teamMatchEntry').close();else renderTeamMatchEntry();return;}
+ if(party){if(!leaderboardState.data)await loadProfileCard();if(!leaderboardState.data?.viewer?.signedIn){location.href='/login?return_to=%2Fplay';return;}}
+ await connectTeam('queue','',{queue:teamMatchUi.kind,rounds:teamMatchUi.rounds,party,abilityMode:teamMatchUi.kind==='ranked'?'classic':abilityUi.mode});
+ if(party&&ui.data?.stage==='party')await openRoomFriendPicker();
+}
+function teamSeatDisabled(d,p){return ui.busy||(d.matchmaking?(p.team!==d.yourTeam||d.yourReady||p.ready&&!p.computer):p.joined&&!p.computer&&p.slot!==d.yourSlot);}
+function renderTeamQueue(d){
+ $('teamPlay').hidden=true;$('waiting').hidden=false;$('waitingTitle').textContent=d.queueKind==='ranked'?tx('2v2 牌位配對','2v2 Ranked match'):tx('2v2 隨機配對','2v2 Random match');$('waitingHeading').textContent=tx('尋找 2v2 隊伍','Finding a 2v2 match');
+ $('waitingText').textContent=(d.partySize===2?tx('你與好友固定同隊 · ','You and your friend stay together · '):tx('系統自動分隊 · ','Teams are balanced automatically · '))+d.roundLimit+tx(' 回合',' rounds');
+ $('waitingCode').hidden=true;$('copyCode').hidden=true;$('copyInvite').hidden=true;$('queueCount').hidden=false;$('queueCount').textContent=tx('等待人數：','Waiting players: ')+d.waitingPlayers+(d.queueKind==='ranked'?tx(' · 依隊伍平均積分搜尋，範圍隨等待時間擴大。',' · Matching by team average; the range expands over time.'):'');$('cancelWait').disabled=ui.busy;
+ $('teamQueueRoster').hidden=false;$('teamQueueRoster').innerHTML=d.players.filter(p=>p.joined).map(p=>'<div>'+avatarMarkup(p.profile,'small')+'<span>'+htmlText(teamPlayerName(p))+'</span></div>').join('');renderQueueExtras(d);syncWaitingAnimation();
+ const fillSeconds=Number.isFinite(d.cpuFillAt)?Math.max(0,Math.ceil((d.cpuFillAt-(d.serverNow??Date.now()))/1000)):null;
+ $('waitingStatus').textContent=fillSeconds!==null?tx('再等 '+fillSeconds+' 秒；若不足四位真人，將由電腦補位。','Waiting '+fillSeconds+' more seconds; CPUs will fill any remaining seats.'):tx('找到至少兩位真人後，再等 15 秒；不足四人的空位將由電腦補上。','Once at least two humans are available, wait 15 seconds; CPUs then fill any remaining seats.');
+}
+function renderTeamLobby(d){
+ const party=d.stage==='party';$('teamPlay').dataset.party=String(party);$('teamRoster').innerHTML=(party?['a']:['a','b']).map(team=>'<section class="team-roster-side" data-side="'+team+'"><h3>'+teamName(team)+(party?tx(' · 好友同隊',' · Party'):' · '+tx('材料 ','Material ')+team.toUpperCase())+'</h3>'+d.players.filter(p=>p.team===team).map(p=>'<button type="button" class="team-seat" data-team-seat="'+p.slot+'" aria-pressed="'+(d.yourSlot===p.slot)+'" '+(teamSeatDisabled(d,p)?'disabled':'')+'>'+avatarMarkup(p.profile,'small')+'<span><strong>'+htmlText(p.joined?teamPlayerName(p):party?tx('邀請好友','Invite a friend'):tx('空位 · 電腦補位','Empty · CPU fill'))+'</strong><small>'+bandLabel(p.field)+(Number.isFinite(p.profile?.rating)&&!p.computer?' · '+p.profile.rating+tx(' 分',' pts'):'')+(p.slot===d.yourSlot?tx(' · 你',' · You'):'')+(d.skills?.enabled?' · '+characterName(p.skill):'')+'</small></span><b>'+(p.computer?tx('電腦 · 可換位','CPU · switch'):p.ready?tx('已準備','Ready'):p.joined?tx('未準備','Not ready'):'')+'</b></button>').join('')+'</section>').join('');
+ $('teamRoundsLabel').textContent=tx('回合數／每人點數','Rounds / points per player');$('teamRounds').innerHTML=[5,12].map(n=>'<button type="button" data-team-rounds="'+n+'" aria-pressed="'+(d.roundLimit===n)+'" '+(!d.host||ui.busy||d.matchmaking&&!party?'disabled':'')+'>'+n+tx(' 回合 · ',' rounds · ')+DUEL_LENGTHS[n]+tx(' 點',' pts')+'</button>').join('');
+ $('teamReady').textContent=d.yourReady?tx('取消準備','Not ready'):tx('準備好了','Ready');$('teamReady').disabled=ui.busy||d.stage==='lobby'&&d.skills?.enabled&&!d.skills.yours;$('teamStart').hidden=!d.host||d.matchmaking&&!party;const humans=d.players.filter(p=>p.joined&&!p.computer),minimum=d.computer?1:d.minimumHumans||2;$('teamStart').disabled=ui.busy||(party?humans.length!==2||!humans.every(p=>p.ready):humans.length<minimum||!humans.every(p=>p.ready));
+ $('teamStart').textContent=party?tx('開始配對','Start matching'):d.computer?tx('開始練習','Start practice'):tx('開始 2v2 對戰','Start 2v2 duel');
+ $('teamLobbyHint').textContent=party?tx('邀一位好友加入，兩人準備後由隊長開始配對。角色可在準備前互換。','Invite one friend. Both ready up, then the leader starts matching. Swap roles before readying.'):d.matchmaking?d.hasComputers?tx('好友固定同隊；空位已由電腦補上。真人全部準備後自動開始，準備前可與同隊玩家或電腦交換角色。','Friends stay together; CPUs fill any empty seats. All humans ready up to start automatically. Swap roles with your teammate or CPU before readying.'):tx('好友固定同隊。真人全部準備後自動開始；準備前可與同隊玩家交換角色。','Friends stay together. All humans ready up to start automatically; swap roles with your teammate before readying.'):d.computer?tx('點電腦的位置可選隊伍與導帶／價帶。選好設定後，按「準備好了」再開始。','Choose a CPU seat to switch team or band. Pick your settings, ready up, then start.'):d.minimumHumans===1?tx('其他玩家已離開，你仍可與電腦繼續。準備後由房主開始；也可先邀請其他好友加入。','Other players have left. You can continue with CPUs: ready up and start, or invite another friend first.'):tx('至少兩位真人，全部準備後由房主開始；空位由電腦補上。開始前，好友仍可加入，或點空位／電腦換隊伍與角色。','At least two humans must ready up, then the host starts. CPUs fill empty seats. Friends can join before the start; tap an empty or CPU seat to switch team or role.');
+ $('teamTimingControl').hidden=!!d.matchmaking;$('teamTimedLabel').textContent=tx('30 秒思考倒數','30-second planning timer');$('teamTimedSwitch').textContent=d.timed===false?tx('關閉','Off'):tx('開啟','On');$('teamTimedSwitch').setAttribute('aria-checked',String(d.timed!==false));$('teamTimedSwitch').disabled=!d.host||ui.busy;
+}
+function initTeamMatching(){
+ for(const b of document.querySelectorAll('[data-match-format]'))b.addEventListener('click',()=>{if(ui.data||ui.queue||ui.busy)return;teamMatchUi.format=b.dataset.matchFormat;try{localStorage.setItem('band-match-format',teamMatchUi.format);}catch{}render();refreshQueue();});
+ $('teamMatchClose').addEventListener('click',()=>closeAnimatedDialog($('teamMatchEntry')));$('teamMatchEntry').addEventListener('cancel',e=>{e.preventDefault();closeAnimatedDialog($('teamMatchEntry'));});
+ $('teamMatchRounds').addEventListener('click',e=>{const b=e.target.closest('[data-match-rounds]');if(b){teamMatchUi.rounds=Number(b.dataset.matchRounds);renderTeamMatchEntry();}});$('teamMatchSolo').addEventListener('click',()=>queueTeamMatch(false));$('teamMatchParty').addEventListener('click',()=>queueTeamMatch(true));document.addEventListener('band-language',()=>{renderMatchFormat();if($('teamMatchEntry').open)renderTeamMatchEntry();});renderMatchFormat();
+}
