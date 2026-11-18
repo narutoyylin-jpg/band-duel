@@ -15,7 +15,7 @@ function installManualSteps(device,nativeAvailable){
   if(device.embedded)return device.ios?tx('請從這個 App 的選單選「在瀏覽器開啟」，使用 Safari 或 Chrome；也可以複製下方網址開啟。','Use this app’s menu to open the game in Safari or Chrome, or copy the link below.'):tx('請從這個 App 的選單選「在瀏覽器開啟」，使用 Chrome；也可以複製下方網址開啟。','Use this app’s menu to open the game in Chrome, or copy the link below.');
   if(device.ios)return tx('請用 Safari 或 Chrome 開啟遊戲網址，便會顯示該瀏覽器的加入主畫面步驟。','Open the game in Safari or Chrome to see that browser’s Add to Home Screen steps.');
   if(device.mac&&device.safari)return tx('在 Safari 點「分享」或上方「檔案」選單 →「加入 Dock」→「加入」。此功能需要 macOS Sonoma 14 或更新版本。','In Safari, open Share or the File menu → Add to Dock → Add. Requires macOS Sonoma 14 or later.');
-  if(device.chrome&&device.android)return tx('點 Chrome 的 ⋮ 選單 →「安裝並建立捷徑」→「安裝」。較舊版本可能顯示「安裝應用程式」或「新增至主畫面」。','Open Chrome’s ⋮ menu → Add to home screen → Install. Older versions may show Install app or Add to Home screen.');
+  if(device.chrome&&device.android)return tx('點 Chrome 的 ⋮ 選單 →「安裝並建立捷徑」→「安裝」。選單也可能顯示「安裝應用程式」或「新增至主畫面」，依畫面選擇即可。','Open Chrome’s ⋮ menu → Add to home screen → Install. The menu may also say Install app; follow the on-screen steps.');
   if(device.chrome)return tx('點 Chrome 的 ⋮ 選單 →「投放、儲存及分享」→「將頁面安裝為應用程式」。也可以使用網址列出現的安裝圖示。','Open Chrome’s ⋮ menu → Cast, save and share → Install page as app. You can also use the install icon when it appears in the address bar.');
   return tx('在目前瀏覽器選單尋找「安裝應用程式」或「新增至主畫面」。若沒有此選項，請複製下方網址改用 Chrome 開啟。','Look in this browser’s menu for Install app or Add to Home screen. If unavailable, copy the link below and open it in Chrome.');
 }
